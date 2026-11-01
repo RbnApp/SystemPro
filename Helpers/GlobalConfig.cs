@@ -5,7 +5,7 @@ namespace RbnSystemPro.Helpers
         public const string AppName = "RbnSystemPro";
 
         // Sürüm: ANA.ARA.YAMA, her basamak 0-9, başında "v" YOK (bkz. README.md → Sürüm).
-        public const string AppVersion = "0.1.3";
+        public const string AppVersion = "0.1.4";
 
         public const string VersionUrl = "https://raw.githubusercontent.com/RbnApp/SystemPro/main/version.json";
         public const string ProjectUrl = "https://github.com/RbnApp/SystemPro";
@@ -18,7 +18,7 @@ namespace RbnSystemPro.Helpers
         // Hakkında bölümündeki atıf bağlantısı yalnız bu sabitle çalışır (kullanıcı girdisinden adres kurulmaz).
         public const string Win11DebloatUrl = "https://github.com/Raphire/Win11Debloat";
 
-        // Ekranda gösterilen birleşik ad: "RbnSystemPro 0.1.3"
+        // Ekranda gösterilen birleşik ad: "RbnSystemPro 0.1.4"
         public static string FullTitle => $"{AppName} {AppVersion}";
 
         // Windows sürümü metni: "Windows 11 10.0.26200" (11/10 ayrımı derleme numarasından; 22000 ve üstü 11).

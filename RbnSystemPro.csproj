@@ -14,13 +14,13 @@
     <Product>RbnSystemPro</Product>
     <Copyright>© 2026 rbnbilisim</Copyright>
     <Description>Windows kurulum sonrası bakım aracı: donanım özeti, sürücü durumu, winget ile program kurulumu, geçici dosya/önbellek temizliği ve ağ araçları — tek pencerede.</Description>
-    <!-- Sürüm tek kaynak: Helpers\GlobalConfig.cs AppVersion = "0.1.3" (v öneki YOK, ANA.ARA.YAMA) -->
+    <!-- Sürüm tek kaynak: Helpers\GlobalConfig.cs AppVersion = "0.1.4" (v öneki YOK, ANA.ARA.YAMA) -->
     <GlobalConfigText>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\Helpers\GlobalConfig.cs'))</GlobalConfigText>
     <VersionRegex>public const string AppVersion = &quot;([\d.]+)&quot;;</VersionRegex>
     <VersionRaw>$([System.Text.RegularExpressions.Regex]::Match($(GlobalConfigText), $(VersionRegex)).Groups[1].Value)</VersionRaw>
     <Version Condition="'$(VersionRaw)' != ''">$(VersionRaw)</Version>
     <Version Condition="'$(VersionRaw)' == ''">0.1.0</Version>
-    <!-- Windows'ta görünen sürüm 0.1.3 olsun: dosya/ürün sürümü metni üç basamak, git eki yok. Yalnız AssemblyVersion .NET zorunluluğu olarak dört parçalıdır (ekranda görünmez). -->
+    <!-- Windows'ta görünen sürüm 0.1.4 olsun: dosya/ürün sürümü metni üç basamak, git eki yok. Yalnız AssemblyVersion .NET zorunluluğu olarak dört parçalıdır (ekranda görünmez). -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
     <AssemblyVersion>$(Version).0</AssemblyVersion>

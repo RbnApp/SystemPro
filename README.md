@@ -122,7 +122,7 @@ geri yükleme noktası almanızı öneririz.
 ## 🚀 Kurulum
 
 Son yayın: **[RbnApp/SystemPro · Releases](https://github.com/RbnApp/SystemPro/releases/latest)**.
-İndirilecek dosya `RbnSystemPro-Setup-<sürüm>.exe`; aşağıdaki örnekler güncel sürüm olan `0.1.3` ile yazıldı.
+İndirilecek dosya `RbnSystemPro-Setup-<sürüm>.exe`; aşağıdaki örnekler güncel sürüm olan `0.1.4` ile yazıldı.
 
 1. Dosyayı indirip çalıştırın. Windows yönetici onayı (UAC) ister; uygulama `Program Files\RbnSystemPro`
    altına kurulur, Başlat menüsüne kısayol eklenir. Kaldırmak için **Ayarlar → Uygulamalar**.
@@ -140,8 +140,8 @@ duran `RbnSystemPro-Setup-<sürüm>.exe.sha256` dosyası beklenen özeti taşır
 PowerShell'de:
 
 ```powershell
-Get-Content .\RbnSystemPro-Setup-0.1.3.exe.sha256             # beklenen: <özet>  <dosya adı>
-Get-FileHash .\RbnSystemPro-Setup-0.1.3.exe -Algorithm SHA256  # sizin dosyanızın özeti
+Get-Content .\RbnSystemPro-Setup-0.1.4.exe.sha256             # beklenen: <özet>  <dosya adı>
+Get-FileHash .\RbnSystemPro-Setup-0.1.4.exe -Algorithm SHA256  # sizin dosyanızın özeti
 ```
 
 İki özet büyük/küçük harf farkı gözetmeden aynıysa dosya değişmemiştir. Farklıysa çalıştırmayın, yeniden
@@ -170,7 +170,7 @@ yalnız sürüm ile Windows sürümünü yazar. Kimlik, makine adı, kullanıcı
 
 ## 🔢 Sürüm
 
-Biçim **ANA.ARA.YAMA**'dır ve başında "v" yoktur (şu an: `0.1.3`). Tek kaynak
+Biçim **ANA.ARA.YAMA**'dır ve başında "v" yoktur (şu an: `0.1.4`). Tek kaynak
 `Helpers/GlobalConfig.cs:8` içindeki `AppVersion` sabitidir; derlemedeki `FileVersion`/`AssemblyVersion`
 değeri de buradan okunur (`RbnSystemPro.csproj:17-27`). Kural: YAMA artar, 9'dan sonra ARA'ya,
 ARA 9'dan sonra ANA'ya devreder (0.4.9 → 0.5.0, 0.9.9 → 1.0.0). Sürüm numarası yalnız yeni bir
