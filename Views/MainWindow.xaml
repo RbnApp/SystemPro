@@ -14,7 +14,7 @@
                 ResizeMode="NoResize"
                 ExtendsContentIntoTitleBar="False"
                 WindowBackdropType="None"
-                Icon="/Assets/app_icon.png"
+                Icon="/Assets/app_icon.ico"
                 Background="{DynamicResource ApplicationBackgroundBrush}">
     
     <Window.Resources />

@@ -49,9 +49,21 @@ LicenseFile=..\LICENSE
 
 OutputDir=..\bin\setup
 OutputBaseFilename={#AppName}-Setup-{#AppVersion}
+; Simge: tek kaynak Assets\app_icon.ico (16,24,32,48,64,128,256 px; DAPP-36).
+; Ürün simgesi "A — nabız halkası" (DAPP-34); eski roket görseli ve yazısı kaldırıldı.
 SetupIconFile=..\Assets\app_icon.ico
+; Kaldırma kaydındaki simge kurulan uygulamanın kendisinden gelir; exe'ye aynı ico gömülür.
 UninstallDisplayIcon={app}\{#AppExeName}
 UninstallDisplayName={#AppName} {#AppVersion}
+
+; Sihirbaz görselleri (DAPP-36): yeni simgeden üretildi, Inno varsayılan/eski görsel yok.
+; Boyutlar Inno 6.6+ belgesine göre (ISetup.chm -> WizardImageFile / WizardSmallImageFile):
+; büyük görsel 164:314 oranı, "202x386'dan büyük önerilir" -> 202x386; küçük görsel kare,
+; "58x58'den büyük önerilir" -> 110x110 (125% DPI'daki 77x77 alanı da örter).
+WizardImageFile=sihirbaz-buyuk.bmp
+WizardSmallImageFile=sihirbaz-kucuk.bmp
+; 32-bit BMP'lerde alfa kanalı ön çarpımsız tanımlı (simgenin yuvarlatılmış köşeleri şeffaf).
+WizardImageAlphaFormat=defined
 
 Compression=lzma2/max
 SolidCompression=yes

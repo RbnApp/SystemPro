@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Assets/app_icon.png" width="96" alt="RbnSystemPro">
+  <img src="docs/assets/logo.png" width="128" alt="RbnSystemPro">
 </p>
 
 <h1 align="center">RbnSystemPro</h1>
