@@ -1,0 +1,6 @@
+# Boş issue açılabilsin (şablonlar zorunlu değil).
+blank_issues_enabled: true
+contact_links:
+  - name: Kurulum ve kullanım notları
+    url: https://github.com/RbnApp/SystemPro#readme
+    about: Derleme, yönetici hakları ve bilinen sınırlar README'de yazıyor.

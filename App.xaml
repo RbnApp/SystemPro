@@ -1,0 +1,25 @@
+﻿<Application x:Class="RbnSystemPro.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:helpers="clr-namespace:RbnSystemPro.Helpers">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Global Converters -->
+            <helpers:BooleanToActivationBgConverter x:Key="BooleanToActivationBgConverter" />
+            <helpers:BooleanToActivationTextConverter x:Key="BooleanToActivationTextConverter" />
+            <helpers:BooleanToIconConverter x:Key="BooleanToIconConverter" />
+            <helpers:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+            <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+            <helpers:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <helpers:StatusToForegroundConverter x:Key="StatusToForegroundConverter" />
+            <helpers:ConnectionTypeToIconConverter x:Key="ConnectionTypeToIconConverter" />
+            <helpers:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
