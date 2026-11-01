@@ -245,7 +245,7 @@ namespace RbnSystemPro.Services
                 _ = _logger.LogWarningAsync($"Son yama tarihi okunamadı (Win32_QuickFixEngineering): {ex.Message}");
             }
 
-            return "Up to Date";
+            return Loc.T("common.upToDate");
         }
 
         public Task LaunchWindowsUpdateAsync()

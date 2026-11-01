@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RbnSystemPro.Models;
 
@@ -32,32 +32,32 @@ namespace RbnSystemPro.Services
             return new List<ProgramModel>
             {
                 // Web Browsers
-                new() { Name = "Google Chrome", Id = "Google.Chrome", Description = "Fast and secure web browser.", IconSymbol = "Globe24", HexColor = "#4285F4", Category = "Web" },
-                new() { Name = "Mozilla Firefox", Id = "Mozilla.Firefox", Description = "Privacy-focused web browser.", IconSymbol = "Globe24", HexColor = "#FF9500", Category = "Web" },
-                new() { Name = "Brave", Id = "Brave.Brave", Description = "Secure browser with built-in ad blocker.", IconSymbol = "Globe24", HexColor = "#FB542B", Category = "Web" },
-                new() { Name = "Opera", Id = "Opera.Opera", Description = "Feature-rich browser with VPN.", IconSymbol = "Globe24", HexColor = "#FF1B2D", Category = "Web" },
+                new() { Name = "Google Chrome", Id = "Google.Chrome", DescriptionKey = "prog.chrome.desc", IconSymbol = "Globe24", HexColor = "#4285F4", CategoryKey = "cat.web" },
+                new() { Name = "Mozilla Firefox", Id = "Mozilla.Firefox", DescriptionKey = "prog.firefox.desc", IconSymbol = "Globe24", HexColor = "#FF9500", CategoryKey = "cat.web" },
+                new() { Name = "Brave", Id = "Brave.Brave", DescriptionKey = "prog.brave.desc", IconSymbol = "Globe24", HexColor = "#FB542B", CategoryKey = "cat.web" },
+                new() { Name = "Opera", Id = "Opera.Opera", DescriptionKey = "prog.opera.desc", IconSymbol = "Globe24", HexColor = "#FF1B2D", CategoryKey = "cat.web" },
                 
                 // Utilities
-                new() { Name = "WinRAR", Id = "RARLab.WinRAR", Description = "Powerful archive manager.", IconSymbol = "FolderZip24", HexColor = "#7B68EE", Category = "Utilities" },
-                new() { Name = "7-Zip", Id = "7zip.7zip", Description = "Open source file archiver.", IconSymbol = "FolderZip24", HexColor = "#32CD32", Category = "Utilities" },
-                new() { Name = "Lightshot", Id = "Skillbrains.Lightshot", Description = "Fast screenshot tool.", IconSymbol = "Screenshot24", HexColor = "#A1359D", Category = "Utilities" },
+                new() { Name = "WinRAR", Id = "RARLab.WinRAR", DescriptionKey = "prog.winrar.desc", IconSymbol = "FolderZip24", HexColor = "#7B68EE", CategoryKey = "cat.utilities" },
+                new() { Name = "7-Zip", Id = "7zip.7zip", DescriptionKey = "prog.7zip.desc", IconSymbol = "FolderZip24", HexColor = "#32CD32", CategoryKey = "cat.utilities" },
+                new() { Name = "Lightshot", Id = "Skillbrains.Lightshot", DescriptionKey = "prog.lightshot.desc", IconSymbol = "Screenshot24", HexColor = "#A1359D", CategoryKey = "cat.utilities" },
                 
                 // Test & Benchmark
-                new() { Name = "CrystalDiskInfo", Id = "CrystalDewWorld.CrystalDiskInfo", Description = "HDD/SSD health monitoring tool.", IconSymbol = "HardDrive24", HexColor = "#00CED1", Category = "Test" },
-                new() { Name = "Hard Disk Sentinel", Id = "JanosMathe.HardDiskSentinel.Standard", Description = "Advanced HDD/SSD monitoring and diagnostics.", IconSymbol = "HardDrive24", HexColor = "#FF6347", Category = "Test" },
-                new() { Name = "FurMark", Id = "Geeks3D.FurMark.2", Description = "GPU stress test and benchmark.", IconSymbol = "DeveloperBoard24", HexColor = "#DC143C", Category = "Test" },
+                new() { Name = "CrystalDiskInfo", Id = "CrystalDewWorld.CrystalDiskInfo", DescriptionKey = "prog.crystaldiskinfo.desc", IconSymbol = "HardDrive24", HexColor = "#00CED1", CategoryKey = "cat.test" },
+                new() { Name = "Hard Disk Sentinel", Id = "JanosMathe.HardDiskSentinel.Standard", DescriptionKey = "prog.hdsentinel.desc", IconSymbol = "HardDrive24", HexColor = "#FF6347", CategoryKey = "cat.test" },
+                new() { Name = "FurMark", Id = "Geeks3D.FurMark.2", DescriptionKey = "prog.furmark.desc", IconSymbol = "DeveloperBoard24", HexColor = "#DC143C", CategoryKey = "cat.test" },
                 
                 // Media
-                new() { Name = "VLC Media Player", Id = "VideoLAN.VLC", Description = "Universal media player.", IconSymbol = "MoviesAndTv24", HexColor = "#FF8C00", Category = "Media" },
-                new() { Name = "K-Lite Codec Pack", Id = "CodecGuide.K-LiteCodecPack.Full", Description = "Complete codec pack for media playback.", IconSymbol = "Video24", HexColor = "#0066CC", Category = "Media" },
+                new() { Name = "VLC Media Player", Id = "VideoLAN.VLC", DescriptionKey = "prog.vlc.desc", IconSymbol = "MoviesAndTv24", HexColor = "#FF8C00", CategoryKey = "cat.media" },
+                new() { Name = "K-Lite Codec Pack", Id = "CodecGuide.K-LiteCodecPack.Full", DescriptionKey = "prog.klite.desc", IconSymbol = "Video24", HexColor = "#0066CC", CategoryKey = "cat.media" },
                 
                 // Development
-                new() { Name = "Notepad++", Id = "Notepad++.Notepad++", Description = "Advanced text editor.", IconSymbol = "DocumentEdit24", HexColor = "#90EE90", Category = "Development" },
+                new() { Name = "Notepad++", Id = "Notepad++.Notepad++", DescriptionKey = "prog.notepadpp.desc", IconSymbol = "DocumentEdit24", HexColor = "#90EE90", CategoryKey = "cat.development" },
 
                 // Gaming
-                new() { Name = "Discord", Id = "Discord.Discord", Description = "Voice and text chat for gamers.", IconSymbol = "People24", HexColor = "#5865F2", Category = "Gaming" },
-                new() { Name = "Steam", Id = "Valve.Steam", Description = "Ultimate destination for playing games.", IconSymbol = "Games24", HexColor = "#171A21", Category = "Gaming" },
-                new() { Name = "Epic Games", Id = "EpicGames.EpicGamesLauncher", Description = "Store for PC games and mods.", IconSymbol = "Games24", HexColor = "#313131", Category = "Gaming" },
+                new() { Name = "Discord", Id = "Discord.Discord", DescriptionKey = "prog.discord.desc", IconSymbol = "People24", HexColor = "#5865F2", CategoryKey = "cat.gaming" },
+                new() { Name = "Steam", Id = "Valve.Steam", DescriptionKey = "prog.steam.desc", IconSymbol = "Games24", HexColor = "#171A21", CategoryKey = "cat.gaming" },
+                new() { Name = "Epic Games", Id = "EpicGames.EpicGamesLauncher", DescriptionKey = "prog.epic.desc", IconSymbol = "Games24", HexColor = "#313131", CategoryKey = "cat.gaming" },
             };
         }
 
@@ -113,7 +113,7 @@ namespace RbnSystemPro.Services
                         if (exists)
                         {
                             prog.IsInstalled = true;
-                            prog.Status = "Already Installed";
+                            prog.StatusKey = "status.alreadyInstalled";
                             prog.IsSelected = false; // Disable selection by default
                         }
                     }
@@ -234,7 +234,7 @@ namespace RbnSystemPro.Services
                     if (process.ExitCode == 0)
                     {
                         await _logger.LogInfoAsync($"Successfully installed {program.Name}.");
-                        _timeline.AddEvent($"{program.Name} Installed", $"{program.Name} has been successfully installed via Winget.", TimelineEventType.Installation);
+                        _timeline.AddEventKey("event.programInstalled.title", "event.programInstalled.desc", TimelineEventType.Installation, new[] { program.Name }, new[] { program.Name });
                         return true;
                     }
                     else
@@ -296,7 +296,7 @@ namespace RbnSystemPro.Services
                 }
 
                 await _logger.LogInfoAsync($"Successfully uninstalled and cleaned {program.Name}.");
-                _timeline.AddEvent($"{program.Name} Uninstalled", $"{program.Name} kaldırıldı; eşleşen kaldırma kaydı temizlendi ({removedKeys} anahtar).", TimelineEventType.Success);
+                _timeline.AddEventKey("event.programUninstalled.title", "event.programUninstalled.desc", TimelineEventType.Success, new[] { program.Name }, new[] { program.Name, removedKeys.ToString() });
                 return true;
             }
             catch (System.Exception ex)

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:l="clr-namespace:RbnSystemPro.Helpers"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     
@@ -11,14 +12,14 @@
         <ui:Card VerticalAlignment="Center" HorizontalAlignment="Center" Padding="40" Margin="20">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ui:ProgressRing IsIndeterminate="True" Width="60" Height="60" Margin="0,0,0,24" />
-                <ui:TextBlock Text="Optimizing System..." 
+                <ui:TextBlock Text="{l:T loading.title}" 
                              FontSize="20" FontWeight="Bold" 
                              HorizontalAlignment="Center" 
                              Margin="0,0,0,8" />
-                <ui:TextBlock Text="Please wait, this may take a few minutes." 
+                <ui:TextBlock Text="{l:T loading.wait}" 
                              FontSize="14" Opacity="0.7" 
                              HorizontalAlignment="Center" />
-                <ui:TextBlock Text="Do not close the application." 
+                <ui:TextBlock Text="{l:T loading.dontClose}" 
                              FontSize="12" Foreground="#D50000" FontWeight="SemiBold"
                              HorizontalAlignment="Center" Margin="0,12,0,0" />
             </StackPanel>

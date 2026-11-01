@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:RbnSystemPro.Helpers"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="DashboardPage">
@@ -25,7 +26,7 @@
                                   Margin="0,0,0,8"
                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     
-                    <ui:TextBlock Text="Manage your system deployment and optimization from one central dashboard." 
+                    <ui:TextBlock Text="{l:T dash.welcomeSubtitle}" 
                                   Appearance="Secondary" 
                                   FontSize="17"
                                   TextWrapping="Wrap"
@@ -33,84 +34,84 @@
                 </StackPanel>
                 
                 <!-- Quick Actions Grid -->
-                <ui:TextBlock Text="SYSTEM MANAGEMENT" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                <ui:TextBlock Text="{l:T dash.systemManagement}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 
                 <UniformGrid Columns="3">
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnProgramsCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="FolderOpen24" FontSize="32" Foreground="{DynamicResource SystemFillColorSuccessBrush}" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="Install Programs" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="Essential software." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.programs.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.programs.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
                     
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnGpuDriverCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="DeveloperBoard24" FontSize="32" Foreground="{DynamicResource SystemFillColorCriticalBrush}" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="GPU Drivers" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="NVIDIA &amp; AMD." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.gpu.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.gpu.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
 
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnDriversCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="Speaker220" FontSize="32" Foreground="#107C10" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="Hardware Drivers" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="Audio, LAN, Chipset." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.drivers.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.drivers.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
 
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnNetworkCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="CellularData124" FontSize="32" Foreground="#0078D4" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="Network Optimizer" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="DNS &amp; Performance." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.network.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.network.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
 
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnCleanerCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="Delete24" FontSize="32" Foreground="#FFC107" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="System Cleaner" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="Clean junk &amp; cache." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T cleaner.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.cleaner.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
 
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnDeployCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="WindowWrench24" FontSize="32" Foreground="{DynamicResource SystemFillColorAttentionBrush}" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="Windows Deploy" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="Optimize &amp; Debloat." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.deploy.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.deploy.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
 
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnPerformanceCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="Pulse24" FontSize="32" Foreground="#8E2DE2" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="Performance" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="Real-time Status." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.performance.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.performance.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
 
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnUpdateSecurityCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="ShieldLock24" FontSize="32" Foreground="#0078D7" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="Security" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="Updates &amp; Safety." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.security.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.security.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
 
                     <ui:Card Margin="0,0,8,8" Padding="16" Height="150" Cursor="Hand" MouseLeftButtonUp="OnActivationCardClick">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="32" Foreground="{DynamicResource SystemFillColorSuccessBrush}" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <ui:TextBlock Text="Activation" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                            <ui:TextBlock Text="License management." FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.activation.title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                            <ui:TextBlock Text="{l:T dash.activation.desc}" FontSize="10" Opacity="0.7" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
                 </UniformGrid>
 
                 <!-- Activity Overview Section -->
-                <ui:TextBlock Text="RECENT ACTIVITY" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,24,0,12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                <ui:TextBlock Text="{l:T dash.recentActivity}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,24,0,12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 <ui:Card Margin="0,0,8,8" Padding="20">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -120,10 +121,10 @@
                         </Grid.ColumnDefinitions>
                         <ui:SymbolIcon Grid.Column="0" Symbol="History24" FontSize="28" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" Margin="0,0,16,0" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <ui:TextBlock Text="System Activity Timeline" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                            <ui:TextBlock Text="Track installations, driver updates, cleanups, and system optimizations." FontSize="12" Opacity="0.7" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <ui:TextBlock Text="{l:T timeline.title}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                            <ui:TextBlock Text="{l:T dash.timeline.desc}" FontSize="12" Opacity="0.7" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <ui:Button Grid.Column="2" Content="View Details" Icon="{ui:SymbolIcon ArrowRight20}" Appearance="Secondary" Click="OnViewTimelineClick" VerticalAlignment="Center"/>
+                        <ui:Button Grid.Column="2" Content="{l:T dash.viewDetails}" Icon="{ui:SymbolIcon ArrowRight20}" Appearance="Secondary" Click="OnViewTimelineClick" VerticalAlignment="Center"/>
                     </Grid>
                 </ui:Card>
             </StackPanel>

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using RbnSystemPro.Services;
 using RbnSystemPro.ViewModels;
 
 namespace RbnSystemPro.Views
@@ -21,13 +22,13 @@ namespace RbnSystemPro.Views
             {
                 if (ViewModel == null)
                 {
-                    MessageBox.Show("Error: NetworkViewModel is null.", "Internal Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Loc.T("internal.nullViewModel"), Loc.T("internal.errorTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                
+
                 if (NavigationService == null)
                 {
-             	      MessageBox.Show("Error: NavigationService is not available.", "Internal Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Loc.T("internal.navServiceMissing"), Loc.T("internal.errorTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -35,7 +36,8 @@ namespace RbnSystemPro.Views
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show($"Navigation Error: {ex.Message}\n\n{ex.InnerException?.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Loc.T("internal.navigationError", ex.Message, ex.InnerException?.Message),
+                    Loc.T("alert.errorTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:RbnSystemPro.Helpers"
       xmlns:helpers="clr-namespace:RbnSystemPro.Helpers"
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="800"
@@ -43,11 +44,11 @@
                 </Border>
                 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <ui:TextBlock Text="Update &amp; Security" FontSize="26" FontWeight="Bold" Foreground="White" />
-                    <ui:TextBlock Text="Monitor system health, updates and essential security settings." FontSize="14" Opacity="0.8" Foreground="White" />
+                    <ui:TextBlock Text="{l:T security.title}" FontSize="26" FontWeight="Bold" Foreground="White" />
+                    <ui:TextBlock Text="{l:T security.subtitle}" FontSize="14" Opacity="0.8" Foreground="White" />
                 </StackPanel>
 
-                <ui:Button Grid.Column="2" Content="Check Windows Update" 
+                <ui:Button Grid.Column="2" Content="{l:T security.checkWindowsUpdate}" 
                            Icon="ArrowSync24" Appearance="Primary" Padding="20,10"
                            Click="OnLaunchUpdateClick"/>
             </Grid>
@@ -57,7 +58,7 @@
             <StackPanel Margin="28,0,28,40">
                 
                 <!-- Security Status Grid -->
-                <ui:TextBlock Text="SECURITY CENTER" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                <ui:TextBlock Text="{l:T security.center}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 
                 <UniformGrid Columns="2" Margin="0,0,0,24">
                     <!-- Defender -->
@@ -71,7 +72,7 @@
                                 <ui:SymbolIcon Symbol="{Binding IsDefenderActive, Converter={StaticResource BooleanToIconConverter}}" Foreground="White" FontSize="20"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <ui:TextBlock Text="Windows Defender" FontWeight="Bold" FontSize="15"/>
+                                <ui:TextBlock Text="{l:T security.defender}" FontWeight="Bold" FontSize="15"/>
                                 <ui:TextBlock Text="{Binding DefenderStatusText}" FontSize="12" Opacity="0.7"/>
                             </StackPanel>
                         </Grid>
@@ -88,7 +89,7 @@
                                 <ui:SymbolIcon Symbol="{Binding IsFirewallActive, Converter={StaticResource BooleanToIconConverter}}" Foreground="White" FontSize="20"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <ui:TextBlock Text="Windows Firewall" FontWeight="Bold" FontSize="15"/>
+                                <ui:TextBlock Text="{l:T security.firewall}" FontWeight="Bold" FontSize="15"/>
                                 <ui:TextBlock Text="{Binding FirewallStatusText}" FontSize="12" Opacity="0.7"/>
                             </StackPanel>
                         </Grid>
@@ -105,7 +106,7 @@
                                 <ui:SymbolIcon Symbol="ShieldCheckmark24" Foreground="White" FontSize="20"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <ui:TextBlock Text="Secure Boot" FontWeight="Bold" FontSize="15"/>
+                                <ui:TextBlock Text="{l:T security.secureBoot}" FontWeight="Bold" FontSize="15"/>
                                 <ui:TextBlock Text="{Binding SecureBootStatusText}" FontSize="12" Opacity="0.7"/>
                             </StackPanel>
                         </Grid>
@@ -122,7 +123,7 @@
                                 <ui:SymbolIcon Symbol="ShieldKeyhole24" Foreground="White" FontSize="20"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <ui:TextBlock Text="UAC (User Control)" FontWeight="Bold" FontSize="15"/>
+                                <ui:TextBlock Text="{l:T security.uac}" FontWeight="Bold" FontSize="15"/>
                                 <ui:TextBlock Text="{Binding UacStatusText}" FontSize="12" Opacity="0.7"/>
                             </StackPanel>
                         </Grid>
@@ -139,7 +140,7 @@
                                 <ui:SymbolIcon Symbol="DeveloperBoard24" Foreground="White" FontSize="20"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <ui:TextBlock Text="TPM Security Chip" FontWeight="Bold" FontSize="15"/>
+                                <ui:TextBlock Text="{l:T security.tpm}" FontWeight="Bold" FontSize="15"/>
                                 <ui:TextBlock Text="{Binding TpmStatusText}" FontSize="12" Opacity="0.7"/>
                             </StackPanel>
                         </Grid>
@@ -147,7 +148,7 @@
                 </UniformGrid>
 
                 <!-- Update Details -->
-                <ui:TextBlock Text="WINDOWS UPDATE INFO" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                <ui:TextBlock Text="{l:T security.updateInfo}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 
                 <ui:Card Padding="24">
                     <StackPanel>
@@ -157,10 +158,10 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <ui:TextBlock Text="Windows is checking for updates automatically." FontSize="16" FontWeight="SemiBold"/>
+                                <ui:TextBlock Text="{l:T security.updateAuto}" FontSize="16" FontWeight="SemiBold"/>
                                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0" Opacity="0.6">
                                     <ui:SymbolIcon Symbol="Clock24" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                    <ui:TextBlock Text="Last success installation: " FontSize="13" VerticalAlignment="Center"/>
+                                    <ui:TextBlock Text="{l:T security.lastInstall}" FontSize="13" VerticalAlignment="Center"/>
                                     <ui:TextBlock Text="{Binding LastUpdateCheck}" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </StackPanel>
@@ -168,7 +169,7 @@
                         </Grid>
                         
                         <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" CornerRadius="8" Padding="16">
-                            <ui:TextBlock Text="Keeping your system updated is vital for security and performance. Windows Update ensures you have the latest bug fixes and feature improvements." 
+                            <ui:TextBlock Text="{l:T security.updateNote}" 
                                           FontSize="13" Opacity="0.8" TextWrapping="Wrap"/>
                         </Border>
                     </StackPanel>

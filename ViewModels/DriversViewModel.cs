@@ -15,11 +15,20 @@ namespace RbnSystemPro.ViewModels
         private readonly ISoftwareService _softwareService;
 
         private bool _isBusy;
-        private string _statusMessage = "Select essential drivers to install";
+        // DAPP-41: durum metni anahtar + argüman; dil değişince kendiliğinden çevrilir.
+        private string _statusKey = "drivers.status.select";
+        private object?[] _statusArgs = System.Array.Empty<object?>();
         private bool _isWingetInstalled;
 
         public bool IsBusy { get => _isBusy; set => SetProperty(ref _isBusy, value); }
-        public string StatusMessage { get => _statusMessage; set => SetProperty(ref _statusMessage, value); }
+        public string StatusMessage => Loc.T(_statusKey, _statusArgs);
+
+        private void SetStatus(string key, params object?[] args)
+        {
+            _statusKey = key;
+            _statusArgs = args;
+            OnPropertyChanged(nameof(StatusMessage));
+        }
         public bool IsWingetInstalled { get => _isWingetInstalled; set => SetProperty(ref _isWingetInstalled, value); }
 
         public ObservableCollection<EssentialDriverModel> Drivers { get; set; } = new();
@@ -57,22 +66,22 @@ namespace RbnSystemPro.ViewModels
             if (driver == null || IsBusy) return;
 
             IsBusy = true;
-            driver.Status = "Installing...";
-            StatusMessage = $"Installing {driver.Name}...";
+            driver.StatusKey = "status.installing";
+            SetStatus("drivers.status.installing", driver.Name);
 
             bool success = await _driverService.InstallDriverAsync(driver);
 
             if (success)
             {
                 driver.IsInstalled = true;
-                driver.Status = "Installed";
-                StatusMessage = $"{driver.Name} installed successfully.";
+                driver.StatusKey = "status.installed";
+                SetStatus("drivers.status.installed", driver.Name);
             }
             else
             {
-                driver.Status = "Failed";
-                StatusMessage = $"Failed to install {driver.Name}.";
-                await _alertService.ShowErrorAsync("Installation Failed", $"Could not install {driver.Name}. Check logs for details.");
+                driver.StatusKey = "status.failed";
+                SetStatus("drivers.status.failed", driver.Name);
+                await _alertService.ShowErrorAsync(Loc.T("drivers.installFailedTitle"), Loc.T("drivers.installFailedMsg", driver.Name));
             }
 
             IsBusy = false;
@@ -83,7 +92,7 @@ namespace RbnSystemPro.ViewModels
             if (IsBusy) return;
 
             IsBusy = true;
-            StatusMessage = "Enabling Winget...";
+            SetStatus("programs.status.enablingWinget");
 
             bool success = await _softwareService.EnableWingetAsync();
 
@@ -92,13 +101,13 @@ namespace RbnSystemPro.ViewModels
 
             if (success)
             {
-                StatusMessage = "Winget enabled successfully.";
-                await _alertService.ShowSuccessAsync("Winget Ready", "Winget has been enabled and is ready to use.");
+                SetStatus("programs.status.wingetEnabled");
+                await _alertService.ShowSuccessAsync(Loc.T("programs.wingetReadyTitle"), Loc.T("programs.wingetReadyMsg"));
             }
             else
             {
-                StatusMessage = "Failed to enable Winget.";
-                await _alertService.ShowErrorAsync("Enable Failed", "Could not enable Winget automatically. Please install 'App Installer' from Microsoft Store.");
+                SetStatus("programs.status.wingetEnableFailed");
+                await _alertService.ShowErrorAsync(Loc.T("programs.enableFailedTitle"), Loc.T("programs.enableFailedMsg"));
             }
         }
     }

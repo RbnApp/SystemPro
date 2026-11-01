@@ -12,6 +12,9 @@ namespace RbnSystemPro.Services
     {
         ObservableCollection<TimelineEvent> Events { get; }
         void AddEvent(string title, string description, TimelineEventType type = TimelineEventType.Info);
+        /// <summary>DAPP-41: kayıt anahtar olarak saklanır; dil değişince geçmiş de çevrilir.</summary>
+        void AddEventKey(string titleKey, string descriptionKey, TimelineEventType type = TimelineEventType.Info,
+            string[]? titleArgs = null, string[]? descriptionArgs = null);
         void Clear();
     }
 
@@ -66,6 +69,47 @@ namespace RbnSystemPro.Services
                 {
                     Events.RemoveAt(Events.Count - 1);
                 }
+
+                SaveEvents();
+            }
+
+            var dispatcher = System.Windows.Application.Current?.Dispatcher;
+            if (dispatcher != null && !dispatcher.CheckAccess())
+            {
+                dispatcher.Invoke(UpdateCollection);
+            }
+            else
+            {
+                UpdateCollection();
+            }
+        }
+
+        public void AddEventKey(string titleKey, string descriptionKey, TimelineEventType type = TimelineEventType.Info,
+            string[]? titleArgs = null, string[]? descriptionArgs = null)
+        {
+            var now = DateTime.Now;
+            var cutOffDate = now.AddDays(-10);
+
+            var newEvent = new TimelineEvent
+            {
+                TitleKey = titleKey,
+                DescriptionKey = descriptionKey,
+                TitleArgs = titleArgs ?? Array.Empty<string>(),
+                DescriptionArgs = descriptionArgs ?? Array.Empty<string>(),
+                Type = type,
+                Timestamp = now
+            };
+
+            void UpdateCollection()
+            {
+                Events.Insert(0, newEvent);
+
+                for (int i = Events.Count - 1; i >= 0; i--)
+                {
+                    if (Events[i].Timestamp < cutOffDate) Events.RemoveAt(i);
+                }
+
+                while (Events.Count > MaxEvents) Events.RemoveAt(Events.Count - 1);
 
                 SaveEvents();
             }

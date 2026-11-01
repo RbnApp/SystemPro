@@ -20,6 +20,8 @@
             <helpers:StatusToForegroundConverter x:Key="StatusToForegroundConverter" />
             <helpers:ConnectionTypeToIconConverter x:Key="ConnectionTypeToIconConverter" />
             <helpers:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+            <helpers:LocKeyConverter x:Key="LocKeyConverter" />
+            <helpers:LocFormatConverter x:Key="LocFormatConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

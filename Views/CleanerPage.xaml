@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:RbnSystemPro.Helpers"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1000"
       Title="CleanerPage">
@@ -18,8 +19,8 @@
         <!-- Header -->
         <Border Grid.Row="0" Padding="24,24,24,12">
             <StackPanel>
-                <ui:TextBlock Text="System Cleaner" FontTypography="TitleLarge" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                <ui:TextBlock Text="Clean browser junk, registry entries, and temporary system files." 
+                <ui:TextBlock Text="{l:T cleaner.title}" FontTypography="TitleLarge" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                <ui:TextBlock Text="{l:T cleaner.subtitle}" 
                              FontTypography="Body" Opacity="0.7" Margin="0,4,0,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
             </StackPanel>
         </Border>
@@ -37,8 +38,8 @@
                         </Grid.ColumnDefinitions>
                         <ui:SymbolIcon Symbol="Delete24" FontSize="32" Foreground="{DynamicResource SystemFillColorCriticalBrush}" Margin="0,0,16,0"/>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <ui:TextBlock Text="System Temporary Files" FontWeight="SemiBold" FontSize="16"/>
-                            <ui:TextBlock Text="Includes Temp, Prefetch, and LOG files." Opacity="0.7" FontSize="12"/>
+                            <ui:TextBlock Text="{l:T cleaner.tempFiles}" FontWeight="SemiBold" FontSize="16"/>
+                            <ui:TextBlock Text="{l:T cleaner.tempFilesDesc}" Opacity="0.7" FontSize="12"/>
                         </StackPanel>
                         <ui:TextBlock Grid.Column="2" Text="{Binding ViewModel.TempFileSizeStr}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" Foreground="{DynamicResource AccentFillColorDefaultBrush}"/>
                     </Grid>
@@ -54,14 +55,14 @@
                         </Grid.ColumnDefinitions>
                         <ui:SymbolIcon Symbol="Database24" FontSize="32" Foreground="#8E2DE2" Margin="0,0,16,0"/>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <ui:TextBlock Text="Registry Cleanup" FontWeight="SemiBold" FontSize="16"/>
-                            <ui:TextBlock Text="Removes obsolete registry entries." Opacity="0.7" FontSize="12"/>
+                            <ui:TextBlock Text="{l:T cleaner.registry}" FontWeight="SemiBold" FontSize="16"/>
+                            <ui:TextBlock Text="{l:T cleaner.registryDesc}" Opacity="0.7" FontSize="12"/>
                         </StackPanel>
-                        <ui:TextBlock Grid.Column="2" Text="{Binding ViewModel.RegistryItemsFound, StringFormat='{}{0} Issues'}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" Foreground="#8E2DE2"/>
+                        <ui:TextBlock Grid.Column="2" Text="{Binding ViewModel.RegistryItemsFound, Converter={StaticResource LocFormatConverter}, ConverterParameter=cleaner.issuesFormat}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" Foreground="#8E2DE2"/>
                     </Grid>
                 </ui:Card>
 
-                <ui:TextBlock Text="BROWSER CLEANING" FontSize="11" FontWeight="Bold" Foreground="White" Margin="4,8,0,0"/>
+                <ui:TextBlock Text="{l:T cleaner.browserHeading}" FontSize="11" FontWeight="Bold" Foreground="White" Margin="4,8,0,0"/>
 
                 <!-- Browsers List -->
                 <ItemsControl ItemsSource="{Binding ViewModel.Browsers}">
@@ -79,11 +80,11 @@
                                     <ui:SymbolIcon Grid.Column="1" Symbol="{Binding Icon}" FontSize="24" Foreground="{DynamicResource AccentFillColorDefaultBrush}" Margin="0,0,12,0" VerticalAlignment="Center"/>
                                     <StackPanel Grid.Column="2" VerticalAlignment="Center">
                                         <ui:TextBlock Text="{Binding Name}" FontWeight="Medium" FontSize="14"/>
-                                        <ui:TextBlock Text="{Binding Status}" Opacity="0.6" FontSize="11"/>
+                                        <ui:TextBlock Text="{Binding StatusKey, Converter={StaticResource LocKeyConverter}}" Opacity="0.6" FontSize="11"/>
                                     </StackPanel>
 
                                     <ui:Button Grid.Column="3" 
-                                               Content="Clean" 
+                                               Content="{l:B cleaner.cleanButton}" 
                                                Appearance="Secondary"
                                                Padding="16,4"
                                                Command="{Binding ViewModel.CleanSpecificBrowserCommand, RelativeSource={RelativeSource AncestorType=Page}}"
@@ -101,8 +102,8 @@
             <Grid>
                 <ui:TextBlock Text="{Binding ViewModel.StatusMessage}" VerticalAlignment="Center" FontWeight="Medium" Foreground="#FFC107"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <ui:Button Content="Scan System" Icon="{ui:SymbolIcon Search24}" Margin="0,0,12,0" Command="{Binding ViewModel.ScanCommand}" IsEnabled="{Binding ViewModel.IsBusy, Converter={StaticResource InverseBooleanConverter}}"/>
-                    <ui:Button Content="Run Cleaner" Appearance="Primary" Icon="{ui:SymbolIcon Delete24}" Command="{Binding ViewModel.CleanCommand}" IsEnabled="{Binding ViewModel.IsBusy, Converter={StaticResource InverseBooleanConverter}}"/>
+                    <ui:Button Content="{l:T cleaner.scan}" Icon="{ui:SymbolIcon Search24}" Margin="0,0,12,0" Command="{Binding ViewModel.ScanCommand}" IsEnabled="{Binding ViewModel.IsBusy, Converter={StaticResource InverseBooleanConverter}}"/>
+                    <ui:Button Content="{l:T cleaner.run}" Appearance="Primary" Icon="{ui:SymbolIcon Delete24}" Command="{Binding ViewModel.CleanCommand}" IsEnabled="{Binding ViewModel.IsBusy, Converter={StaticResource InverseBooleanConverter}}"/>
                 </StackPanel>
             </Grid>
         </Border>

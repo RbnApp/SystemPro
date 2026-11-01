@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:RbnSystemPro.Helpers"
       xmlns:models="clr-namespace:RbnSystemPro.Models"
       xmlns:helpers="clr-namespace:RbnSystemPro.Helpers"
       mc:Ignorable="d" 
@@ -48,13 +49,13 @@
                         <ui:SymbolIcon Symbol="{Binding SelectedDisk.IconSymbol, FallbackValue='Pulse24'}" FontSize="32" Foreground="White"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
-                        <ui:TextBlock Text="{Binding SelectedDisk.Model, FallbackValue='Monitor real-time system usage and storage health.'}" FontSize="14" Opacity="0.8" Foreground="White" />
-                        <ui:TextBlock Text="{Binding SelectedDisk.Name, StringFormat='Mount Point: {0}'}" FontSize="11" Opacity="0.6" Foreground="White" Visibility="{Binding IsDetailViewActive, Converter={StaticResource BoolToVis}}"/>
+                        <ui:TextBlock Text="{Binding SelectedDisk.Model}" FontSize="14" Opacity="0.8" Foreground="White" />
+                        <ui:TextBlock Text="{Binding SelectedDisk.Name, Converter={StaticResource LocFormatConverter}, ConverterParameter=perf.mountPoint}" FontSize="11" Opacity="0.6" Foreground="White" Visibility="{Binding IsDetailViewActive, Converter={StaticResource BoolToVis}}"/>
                     </StackPanel>
                 </StackPanel>
 
                 <ui:Button Grid.Column="1" 
-                           Content="Back to Overview" 
+                           Content="{l:T perf.back}" 
                            Icon="ArrowLeft24" 
                            Appearance="Transparent" 
                            Foreground="White"
@@ -69,13 +70,13 @@
                 <!-- 1. OVERVIEW DASHBOARD (Hidden in Detail View) -->
                 <StackPanel Visibility="{Binding IsDetailViewActive, Converter={StaticResource InverseBoolToVis}}">
                     <!-- System Stats Overview -->
-                    <ui:TextBlock Text="LIVE MONITOR" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                    <ui:TextBlock Text="{l:T perf.liveMonitor}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                     
                     <UniformGrid Columns="2" Margin="0,0,0,24">
                         <!-- CPU Usage -->
                         <ui:Card Margin="0,0,12,12" Padding="20">
                             <StackPanel>
-                                <ui:TextBlock Text="CPU LOAD" FontSize="11" Opacity="0.6" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <ui:TextBlock Text="{l:T perf.cpuLoad}" FontSize="11" Opacity="0.6" FontWeight="SemiBold" Margin="0,0,0,8"/>
                                 <ui:TextBlock Text="{Binding Performance.CpuUsageText}" FontSize="28" FontWeight="Bold" Foreground="#8E2DE2"/>
                                 <ProgressBar Value="{Binding Performance.CpuUsageValue, Mode=OneWay}" Height="4" Margin="0,12,0,0" Foreground="#8E2DE2"/>
                             </StackPanel>
@@ -84,7 +85,7 @@
                         <!-- GPU Usage -->
                         <ui:Card Margin="0,0,12,12" Padding="20">
                             <StackPanel>
-                                <ui:TextBlock Text="GPU LOAD" FontSize="11" Opacity="0.6" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <ui:TextBlock Text="{l:T perf.gpuLoad}" FontSize="11" Opacity="0.6" FontWeight="SemiBold" Margin="0,0,0,8"/>
                                 <ui:TextBlock Text="{Binding Performance.GpuUsageText}" FontSize="28" FontWeight="Bold" Foreground="#F093FB"/>
                                 <ProgressBar Value="{Binding Performance.GpuUsageValue, Mode=OneWay}" Height="4" Margin="0,12,0,0" Foreground="#F093FB"/>
                             </StackPanel>
@@ -93,7 +94,7 @@
                         <!-- RAM Usage -->
                         <ui:Card Margin="0,0,12,12" Padding="20">
                             <StackPanel>
-                                <ui:TextBlock Text="RAM USAGE" FontSize="11" Opacity="0.6" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <ui:TextBlock Text="{l:T perf.ramUsage}" FontSize="11" Opacity="0.6" FontWeight="SemiBold" Margin="0,0,0,8"/>
                                 <StackPanel Orientation="Horizontal">
                                     <ui:TextBlock Text="{Binding Performance.RamUsedGB}" FontSize="28" FontWeight="Bold" Foreground="#4A00E0"/>
                                     <ui:TextBlock Text="{Binding Performance.RamTotalGB, StringFormat=/ {0} GB}" FontSize="16" Opacity="0.5" Margin="4,0,0,4" VerticalAlignment="Bottom"/>
@@ -105,7 +106,7 @@
                         <!-- Uptime -->
                         <ui:Card Margin="0,0,12,12" Padding="20">
                             <StackPanel VerticalAlignment="Center">
-                                <ui:TextBlock Text="UPTIME &amp; MODE" FontSize="11" Opacity="0.6" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <ui:TextBlock Text="{l:T perf.uptime}" FontSize="11" Opacity="0.6" FontWeight="SemiBold" Margin="0,0,0,8"/>
                                 <ui:TextBlock Text="{Binding Performance.Uptime}" FontSize="20" FontWeight="Bold" Margin="0,4,0,0"/>
                                 <ui:TextBlock Text="{Binding Performance.PowerPlan}" FontSize="11" Opacity="0.5" Margin="0,4,0,0"/>
                             </StackPanel>
@@ -113,7 +114,7 @@
                     </UniformGrid>
 
                     <!-- Disk Drives List -->
-                    <ui:TextBlock Text="STORAGE &amp; DRIVES" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                    <ui:TextBlock Text="{l:T perf.storage}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,16" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                     <ItemsControl ItemsSource="{Binding Performance.Disks}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:DiskDriveInfo}">
@@ -135,13 +136,13 @@
                                                  <ui:TextBlock Text="{Binding Name, StringFormat=( {0} )}" FontSize="13" Opacity="0.5" Margin="6,0,0,0" VerticalAlignment="Center"/>
                                                  <!-- Tags -->
                                                  <Border Background="#8E2DE2" CornerRadius="4" Padding="6,2" Margin="8,0,0,0" Visibility="{Binding IsSystemDrive, Converter={StaticResource BoolToVis}}">
-                                                     <ui:TextBlock Text="SYSTEM" Foreground="White" FontSize="10" FontWeight="Bold"/>
+                                                     <ui:TextBlock Text="{l:B perf.system}" Foreground="White" FontSize="10" FontWeight="Bold"/>
                                                  </Border>
                                                  <Border Background="#4285F4" CornerRadius="4" Padding="6,2" Margin="8,0,0,0" Visibility="{Binding IsCloudDrive, Converter={StaticResource BoolToVis}}">
-                                                     <ui:TextBlock Text="CLOUD" Foreground="White" FontSize="10" FontWeight="Bold"/>
+                                                     <ui:TextBlock Text="{l:B perf.cloud}" Foreground="White" FontSize="10" FontWeight="Bold"/>
                                                  </Border>
                                                  <Border Background="#20FFFFFF" CornerRadius="4" Padding="6,2" Margin="8,0,0,0" Visibility="{Binding IsPartition, Converter={StaticResource BoolToVis}}">
-                                                     <ui:TextBlock Text="PARTITION" Foreground="White" FontSize="10" Opacity="0.6"/>
+                                                     <ui:TextBlock Text="{l:B perf.partition}" Foreground="White" FontSize="10" Opacity="0.6"/>
                                                  </Border>
                                              </StackPanel>
                                              <ui:TextBlock Text="{Binding Model}" FontSize="11" Opacity="0.4" Margin="0,0,0,8"/>
@@ -150,7 +151,7 @@
                                          </StackPanel>
 
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="24,0,0,0">
-                                             <ui:TextBlock Text="{Binding FreeSpaceGB, StringFormat={}{0:F1} GB free}" FontSize="13" FontWeight="SemiBold" Foreground="#00C853" HorizontalAlignment="Right"/>
+                                             <ui:TextBlock Text="{Binding FreeSpaceGB, Converter={StaticResource LocFormatConverter}, ConverterParameter=perf.gbFree}" FontSize="13" FontWeight="SemiBold" Foreground="#00C853" HorizontalAlignment="Right"/>
                                              <ui:TextBlock Text="{Binding TemperatureText}" FontSize="11" Opacity="0.4" HorizontalAlignment="Right"/>
                                         </StackPanel>
                                     </Grid>
@@ -171,25 +172,25 @@
                         <!-- Left: STORAGE STATUS -->
                         <ui:Card Grid.Column="0" Margin="0,0,6,0" Padding="24" VerticalAlignment="Stretch" MinHeight="320">
                             <StackPanel>
-                                <ui:TextBlock Text="STORAGE STATUS" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20"/>
+                                <ui:TextBlock Text="{l:T perf.storageStatus}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20"/>
                                 
                                 <Grid Margin="0,0,0,15">
-                                    <ui:TextBlock Text="Free Space" Opacity="0.7"/>
+                                    <ui:TextBlock Text="{l:T perf.freeSpace}" Opacity="0.7"/>
                                     <ui:TextBlock Text="{Binding SelectedDisk.FreeSpaceGB, StringFormat={}{0:F1} GB}" Foreground="#00C853" FontWeight="Bold" HorizontalAlignment="Right"/>
                                 </Grid>
                                 <Separator Background="#10FFFFFF" Margin="0,0,0,15"/>
                                 <Grid Margin="0,0,0,15">
-                                    <ui:TextBlock Text="Used Space" Opacity="0.7"/>
+                                    <ui:TextBlock Text="{l:T perf.usedSpace}" Opacity="0.7"/>
                                     <ui:TextBlock Text="{Binding SelectedDisk.UsedSpaceGB, StringFormat={}{0:F1} GB}" Foreground="#8E2DE2" FontWeight="Bold" HorizontalAlignment="Right"/>
                                 </Grid>
                                 <Separator Background="#10FFFFFF" Margin="0,0,0,15"/>
                                 <Grid Margin="0,0,0,15">
-                                    <ui:TextBlock Text="Temperature" Opacity="0.7"/>
+                                    <ui:TextBlock Text="{l:T perf.temperature}" Opacity="0.7"/>
                                     <ui:TextBlock Text="{Binding SelectedDisk.TemperatureText}" FontWeight="Bold" HorizontalAlignment="Right"/>
                                 </Grid>
                                 
                                 <Border Background="#108E2DE2" CornerRadius="8" Padding="15" Margin="0,10,0,0">
-                                    <ui:TextBlock Text="Storage space is calculated directly from the operating system's file system reporting." FontSize="12" TextWrapping="Wrap" Opacity="0.8" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                    <ui:TextBlock Text="{l:T perf.storageNote}" FontSize="12" TextWrapping="Wrap" Opacity="0.8" HorizontalAlignment="Center" TextAlignment="Center"/>
                                 </Border>
                             </StackPanel>
                         </ui:Card>
@@ -204,25 +205,25 @@
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
                                 
-                                <ui:TextBlock Grid.Row="0" Text="HARDWARE INFO" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20"/>
+                                <ui:TextBlock Grid.Row="0" Text="{l:T perf.hardwareInfo}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20"/>
                                 
                                 <ui:TextBlock Grid.Row="1" Text="{Binding SelectedDisk.Model}" FontSize="18" FontWeight="Bold" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,15"/>
                                 <Separator Grid.Row="2" Background="#10FFFFFF" Margin="0,0,0,20"/>
 
                                 <StackPanel Grid.Row="3" VerticalAlignment="Center">
                                     <Grid Margin="0,0,0,15">
-                                        <ui:TextBlock Text="Drive Type" Opacity="0.7"/>
+                                        <ui:TextBlock Text="{l:T perf.driveType}" Opacity="0.7"/>
                                         <ui:TextBlock Text="SSD / NVMe" Visibility="{Binding SelectedDisk.IsSsd, Converter={StaticResource BoolToVis}}" FontWeight="Bold" HorizontalAlignment="Right" Foreground="#8E2DE2"/>
-                                        <ui:TextBlock Text="HDD / Mechanical" Visibility="{Binding SelectedDisk.IsSsd, Converter={StaticResource InverseBoolToVis}}" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                        <ui:TextBlock Text="{l:T perf.hdd}" Visibility="{Binding SelectedDisk.IsSsd, Converter={StaticResource InverseBoolToVis}}" FontWeight="Bold" HorizontalAlignment="Right"/>
                                     </Grid>
                                     <Separator Background="#10FFFFFF" Margin="0,0,0,15"/>
                                     <Grid Margin="0,0,0,15">
-                                        <ui:TextBlock Text="File System" Opacity="0.7"/>
+                                        <ui:TextBlock Text="{l:T perf.fileSystem}" Opacity="0.7"/>
                                         <ui:TextBlock Text="{Binding SelectedDisk.Format}" FontWeight="Bold" HorizontalAlignment="Right"/>
                                     </Grid>
                                     <Separator Background="#10FFFFFF" Margin="0,0,0,15"/>
                                     <Grid Margin="0,0,0,15">
-                                        <ui:TextBlock Text="Status" Opacity="0.7"/>
+                                        <ui:TextBlock Text="{l:T perf.status}" Opacity="0.7"/>
                                         <ui:TextBlock Text="{Binding SelectedDisk.StatusText}" Foreground="#00C853" FontWeight="Bold" HorizontalAlignment="Right"/>
                                     </Grid>
                                 </StackPanel>
@@ -233,7 +234,7 @@
                     <!-- Capacity Analytics (Improved) -->
                     <ui:Card Margin="0,12,0,0" Padding="24">
                         <StackPanel>
-                            <ui:TextBlock Text="CAPACITY ANALYTICS" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20"/>
+                            <ui:TextBlock Text="{l:T perf.capacity}" FontSize="11" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -242,20 +243,20 @@
                                 </Grid.ColumnDefinitions>
                                 
                                 <StackPanel Grid.Column="0">
-                                    <ui:TextBlock Text="Total Size" FontSize="11" Opacity="0.6"/>
+                                    <ui:TextBlock Text="{l:T perf.totalSize}" FontSize="11" Opacity="0.6"/>
                                     <ui:TextBlock Text="{Binding SelectedDisk.TotalSizeGB, StringFormat={}{0} GB}" FontSize="20" FontWeight="Bold"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
-                                    <ui:TextBlock Text="Used" FontSize="11" Opacity="0.6"/>
+                                    <ui:TextBlock Text="{l:T perf.used}" FontSize="11" Opacity="0.6"/>
                                     <ui:TextBlock Text="{Binding SelectedDisk.UsedSpaceGB, StringFormat={}{0:F1} GB}" FontSize="20" FontWeight="Bold" Foreground="#8E2DE2"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2">
-                                    <ui:TextBlock Text="Available" FontSize="11" Opacity="0.6"/>
+                                    <ui:TextBlock Text="{l:T perf.available}" FontSize="11" Opacity="0.6"/>
                                     <ui:TextBlock Text="{Binding SelectedDisk.FreeSpaceGB, StringFormat={}{0:F1} GB}" FontSize="20" FontWeight="Bold" Foreground="#00C853"/>
                                 </StackPanel>
                             </Grid>
                             <ProgressBar Value="{Binding SelectedDisk.UsagePercentage, Mode=OneWay}" Height="10" Margin="0,20,0,10" Foreground="#8E2DE2"/>
-                            <ui:TextBlock Text="{Binding SelectedDisk.UsagePercentage, StringFormat={}{0:F1}% utilized}" FontSize="12" Opacity="0.4" HorizontalAlignment="Center"/>
+                            <ui:TextBlock Text="{Binding SelectedDisk.UsagePercentage, Converter={StaticResource LocFormatConverter}, ConverterParameter=perf.utilized}" FontSize="12" Opacity="0.4" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </ui:Card>
                 </StackPanel>

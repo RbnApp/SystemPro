@@ -16,12 +16,21 @@ namespace RbnSystemPro.ViewModels
         private readonly ILoggerService _logger;
 
         private bool _isBusy;
-        private string _statusMessage = "Ready to scan...";
+        // DAPP-41: durum metni anahtar + argüman; dil değişince kendiliğinden çevrilir.
+        private string _statusKey = "cleaner.status.ready";
+        private object?[] _statusArgs = Array.Empty<object?>();
         private string _tempFileSizeStr = "0 MB";
         private int _registryItemsFound;
 
         public bool IsBusy { get => _isBusy; set => SetProperty(ref _isBusy, value); }
-        public string StatusMessage { get => _statusMessage; set => SetProperty(ref _statusMessage, value); }
+        public string StatusMessage => Loc.T(_statusKey, _statusArgs);
+
+        private void SetStatus(string key, params object?[] args)
+        {
+            _statusKey = key;
+            _statusArgs = args;
+            OnPropertyChanged(nameof(StatusMessage));
+        }
         public string TempFileSizeStr { get => _tempFileSizeStr; set => SetProperty(ref _tempFileSizeStr, value); }
         public int RegistryItemsFound { get => _registryItemsFound; set => SetProperty(ref _registryItemsFound, value); }
 
@@ -48,18 +57,18 @@ namespace RbnSystemPro.ViewModels
         {
             if (browser == null || IsBusy) return;
 
-            var oldStatus = browser.Status;
-            browser.Status = "Cleaning...";
-            StatusMessage = $"Cleaning {browser.Name}...";
+            browser.StatusKey = "status.cleaning";
+            SetStatus("cleaner.status.cleaningBrowser", browser.Name);
 
             bool success = await _cleanerService.CleanBrowserAsync(browser);
             
-            browser.Status = success ? "Cleaned" : "Failed";
-            StatusMessage = success ? $"{browser.Name} cleaned." : $"Failed to clean {browser.Name}.";
+            browser.StatusKey = success ? "status.cleaned" : "status.failed";
+            if (success) SetStatus("cleaner.status.browserCleaned", browser.Name);
+            else SetStatus("cleaner.status.browserFailed", browser.Name);
             
             if (success)
             {
-                await _alertService.ShowSuccessAsync("Browser Cleaned", $"{browser.Name} cache has been removed.");
+                await _alertService.ShowSuccessAsync(Loc.T("cleaner.browserCleanedTitle"), Loc.T("cleaner.browserCleanedMsg", browser.Name));
             }
         }
 
@@ -73,7 +82,7 @@ namespace RbnSystemPro.ViewModels
         private async Task ScanAsync()
         {
             IsBusy = true;
-            StatusMessage = "Scanning for junk files...";
+            SetStatus("cleaner.status.scanning");
             
             long size = await _cleanerService.GetTempFileSizeAsync();
             TempFileSizeStr = $"{(size / (1024.0 * 1024.0)):N2} MB";
@@ -81,25 +90,24 @@ namespace RbnSystemPro.ViewModels
             RegistryItemsFound = await _cleanerService.ScanRegistryAsync();
             
             IsBusy = false;
-            StatusMessage = "Scan complete.";
+            SetStatus("cleaner.status.scanDone");
         }
 
         private async Task CleanAsync()
         {
             // Yıkıcı işlem: neyin silineceği ONAYDAN ÖNCE söylenir (denetim #13).
             var confirmed = await _alertService.ShowConfirmAsync(
-                "Sistem Temizliği",
-                "Geçici dosyalar (%TEMP%, C:\\Windows\\Temp), kullanılmayan kayıt defteri kayıtları ve " +
-                "seçili tarayıcı önbellekleri SİLİNECEK.\n\nDevam edilsin mi?");
+                Loc.T("cleaner.confirmTitle"),
+                Loc.T("cleaner.confirmMsg"));
 
             if (!confirmed)
             {
-                StatusMessage = "Temizlik iptal edildi.";
+                SetStatus("cleaner.status.cancelled");
                 return;
             }
 
             IsBusy = true;
-            StatusMessage = "Cleaning selected items...";
+            SetStatus("cleaner.status.cleaning");
 
             await _cleanerService.CleanTempFilesAsync();
 
@@ -107,17 +115,17 @@ namespace RbnSystemPro.ViewModels
 
             foreach (var browser in Browsers.Where(b => b.IsSelected))
             {
-                browser.Status = "Cleaning...";
+                browser.StatusKey = "status.cleaning";
                 await _cleanerService.CleanBrowserAsync(browser);
-                browser.Status = "Cleaned";
+                browser.StatusKey = "status.cleaned";
             }
 
             IsBusy = false;
-            StatusMessage = "Cleanup finished successfully.";
+            SetStatus("cleaner.status.done");
             TempFileSizeStr = "0 MB";
             RegistryItemsFound = 0;
 
-            await _alertService.ShowSuccessAsync("Cleanup Successful", "System junk and selected browser data have been removed.");
+            await _alertService.ShowSuccessAsync(Loc.T("cleaner.successTitle"), Loc.T("cleaner.successMsg"));
         }
     }
 }

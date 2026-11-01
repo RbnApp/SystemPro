@@ -14,18 +14,20 @@ namespace RbnSystemPro.Views
         private readonly ITimelineService _timelineService;
         private readonly ISettingsService _settingsService;
         private readonly IAlertService _alertService;
+        private readonly ILocalizationService _localization;
         private readonly ILoggerService _logger;
         private bool _isInitializing = true;
 
         public SettingsPage()
         {
             InitializeComponent();
-            
+
             var serviceProvider = ((App)Application.Current).GetServiceProvider();
             _updateService = serviceProvider.GetRequiredService<IUpdateService>();
             _timelineService = serviceProvider.GetRequiredService<ITimelineService>();
             _settingsService = serviceProvider.GetRequiredService<ISettingsService>();
             _alertService = serviceProvider.GetRequiredService<IAlertService>();
+            _localization = serviceProvider.GetRequiredService<ILocalizationService>();
             _logger = serviceProvider.GetRequiredService<ILoggerService>();
 
             LoadSettings();
@@ -35,6 +37,29 @@ namespace RbnSystemPro.Views
         private void LoadSettings()
         {
             HardwareMonitoringSwitch.IsChecked = _settingsService.Settings.EnableDeepHardwareMonitoring;
+
+            // DAPP-41: kayıtlı tercih (System/Turkish/English) seçiciye yansıtılır.
+            LanguageComboBox.SelectedIndex = _localization.Language switch
+            {
+                AppLanguage.Turkish => 1,
+                AppLanguage.English => 2,
+                _ => 0
+            };
+        }
+
+        /// <summary>Dil değişimi: anında uygulanır ve ayar dosyasına yazılır (yeniden başlatma yok).</summary>
+        private void OnLanguageChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_isInitializing) return;
+
+            var mode = LanguageComboBox.SelectedIndex switch
+            {
+                1 => AppLanguage.Turkish,
+                2 => AppLanguage.English,
+                _ => AppLanguage.System
+            };
+
+            _localization.SetLanguage(mode);
         }
 
         private void OnSettingChanged(object sender, RoutedEventArgs e)
@@ -48,15 +73,15 @@ namespace RbnSystemPro.Views
         private async void OnClearLogsClick(object sender, RoutedEventArgs e)
         {
             var confirmed = await _alertService.ShowConfirmAsync(
-                "Clear Logs",
-                "Are you sure you want to permanently delete all activity history?");
+                Loc.T("settings.clearLogsConfirmTitle"),
+                Loc.T("settings.clearLogsConfirmMsg"));
 
             if (confirmed)
             {
                 _timelineService.Clear();
                 await _alertService.ShowSuccessAsync(
-                    "Success",
-                    "Activity logs have been successfully cleared.");
+                    Loc.T("settings.clearLogsSuccessTitle"),
+                    Loc.T("settings.clearLogsSuccessMsg"));
             }
         }
 
@@ -84,7 +109,7 @@ namespace RbnSystemPro.Views
             var url = GlobalConfig.Win11DebloatUrl;
             if (!url.StartsWith("https://github.com/Raphire/", StringComparison.OrdinalIgnoreCase))
             {
-                await _alertService.ShowErrorAsync("Third-party script", "The source address is invalid.");
+                await _alertService.ShowErrorAsync(Loc.T("settings.thirdPartyTitle"), Loc.T("settings.invalidSource"));
                 return;
             }
 
@@ -100,8 +125,8 @@ namespace RbnSystemPro.Views
             {
                 _ = _logger.LogWarningAsync($"Win11Debloat bağlantısı açılamadı: {ex.Message}");
                 await _alertService.ShowErrorAsync(
-                    "Third-party script",
-                    "Could not open the browser. You can type the address manually: " + GlobalConfig.Win11DebloatUrl);
+                    Loc.T("settings.thirdPartyTitle"),
+                    Loc.T("settings.browserOpenFailed", GlobalConfig.Win11DebloatUrl));
             }
         }
 
@@ -113,7 +138,7 @@ namespace RbnSystemPro.Views
             var url = GlobalConfig.FeedbackUrl;
             if (!url.StartsWith("https://github.com/RbnApp/", StringComparison.OrdinalIgnoreCase))
             {
-                await _alertService.ShowErrorAsync("Geri bildirim", "Geri bildirim adresi geçersiz.");
+                await _alertService.ShowErrorAsync(Loc.T("settings.feedbackTitle"), Loc.T("settings.feedbackInvalid"));
                 return;
             }
 
@@ -129,15 +154,15 @@ namespace RbnSystemPro.Views
             {
                 _ = _logger.LogWarningAsync($"Geri bildirim bağlantısı açılamadı: {ex.Message}");
                 await _alertService.ShowErrorAsync(
-                    "Geri bildirim",
-                    "Tarayıcı açılamadı. Adresi tarayıcıya elle yazabilirsiniz: " + GlobalConfig.IssuesUrl);
+                    Loc.T("settings.feedbackTitle"),
+                    Loc.T("settings.browserOpenFailed", GlobalConfig.IssuesUrl));
             }
         }
 
         private async void OnCheckUpdateClick(object sender, RoutedEventArgs e)
         {
             CheckUpdateButton.IsEnabled = false;
-            CheckUpdateButton.Content = "Checking...";
+            CheckUpdateButton.Content = Loc.T("settings.checking");
 
             try
             {
@@ -146,8 +171,8 @@ namespace RbnSystemPro.Views
                 if (hasUpdate)
                 {
                     var confirmed = await _alertService.ShowConfirmAsync(
-                        "Update Available",
-                        $"A new version (v{version}) is available. Would you like to download it now?");
+                        Loc.T("settings.updateAvailableTitle"),
+                        Loc.T("settings.updateAvailableMsg", version));
 
                     if (confirmed)
                     {
@@ -156,27 +181,28 @@ namespace RbnSystemPro.Views
                             FileName = string.IsNullOrEmpty(url) ? RbnSystemPro.Helpers.GlobalConfig.ProjectUrl : url,
                             UseShellExecute = true
                         });
-                        
-                        _timelineService.AddEvent("Update Download", $"Started download for v{version}.");
+
+                        _timelineService.AddEventKey("settings.updateDownloadTimeline", "settings.updateDownloadTimelineDesc",
+                            RbnSystemPro.Models.TimelineEventType.Installation, null, new[] { version ?? string.Empty });
                     }
                 }
                 else
                 {
                     await _alertService.ShowSuccessAsync(
-                        "Up to Date",
-                        $"You are currently running the latest version of {GlobalConfig.AppName}.");
+                        Loc.T("settings.upToDateTitle"),
+                        Loc.T("settings.upToDateMsg", GlobalConfig.AppName));
                 }
             }
             catch (Exception ex)
             {
                 await _alertService.ShowErrorAsync(
-                    "Error",
-                    "Failed to check for updates: " + ex.Message);
+                    Loc.T("alert.errorTitle"),
+                    Loc.T("settings.updateCheckFailed", ex.Message));
             }
             finally
             {
                 CheckUpdateButton.IsEnabled = true;
-                CheckUpdateButton.Content = "Check for Updates";
+                CheckUpdateButton.Content = Loc.T("settings.checkUpdates");
             }
         }
     }

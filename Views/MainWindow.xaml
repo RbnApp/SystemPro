@@ -4,6 +4,7 @@
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                xmlns:l="clr-namespace:RbnSystemPro.Helpers"
                 xmlns:local="clr-namespace:RbnSystemPro.Views"
                 xmlns:controls="clr-namespace:RbnSystemPro.Controls"
                 xmlns:helpers="clr-namespace:RbnSystemPro.Helpers"
@@ -46,21 +47,21 @@
                 <Grid Grid.Row="0" Margin="24,12,24,12">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                          <ui:Button Icon="{ui:SymbolIcon Home24}" 
-                                    Content="Home" 
+                                    Content="{l:T nav.home}" 
                                     Click="OnHomeButtonClick" 
                                     Margin="0,0,4,0" 
                                     Appearance="Transparent"
                                     Padding="12,8"/>
                          
                          <ui:Button Icon="{ui:SymbolIcon History24}" 
-                                    Content="Activity" 
+                                    Content="{l:T nav.activity}" 
                                     Click="OnActivityButtonClick" 
                                     Margin="0,0,4,0" 
                                     Appearance="Transparent"
                                     Padding="12,8"/>
 
                          <ui:Button Icon="{ui:SymbolIcon Settings24}" 
-                                    Content="Settings" 
+                                    Content="{l:T nav.settings}" 
                                     Click="OnSettingsButtonClick" 
                                     Margin="0,0,0,0"
                                     Appearance="Transparent"
@@ -73,7 +74,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <ui:SymbolIcon Grid.Column="0" Symbol="Circle20" FontSize="11" Margin="0,1,6,0" Foreground="LimeGreen" VerticalAlignment="Center"/>
-                        <ui:TextBlock Grid.Column="1" Text="SYSTEM READY" FontSize="10" FontWeight="Bold" Opacity="0.8" VerticalAlignment="Center"/>
+                        <ui:TextBlock Grid.Column="1" Text="{l:T main.systemReady}" FontSize="10" FontWeight="Bold" Opacity="0.8" VerticalAlignment="Center"/>
                     </Grid>
                 </Grid>
 
@@ -95,7 +96,7 @@
                     BorderThickness="1,0,0,0">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="16,24,16,24">
-                        <ui:TextBlock Text="System Analysis" 
+                        <ui:TextBlock Text="{l:T main.systemAnalysis}" 
                                      FontWeight="Bold" 
                                      FontSize="22" 
                                      Margin="4,0,0,24"
@@ -104,8 +105,8 @@
                         <!-- CPU Section -->
                         <Border Margin="0,0,0,12" Padding="16" Background="{DynamicResource ControlFillColorSecondaryBrush}" CornerRadius="10">
                             <StackPanel>
-                                <ui:TextBlock Text="PROCESSOR" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
-                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.CpuName, FallbackValue='Detecting...'}" 
+                                <ui:TextBlock Text="{l:T main.processor}" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
+                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.CpuName}" 
                                              FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap"/>
                                 <ui:TextBlock Text="{Binding ViewModel.CpuCoreInfo}" FontSize="12" Opacity="0.8" Margin="0,4,0,0"/>
                             </StackPanel>
@@ -114,8 +115,8 @@
                         <!-- GPU Section -->
                         <Border Margin="0,0,0,12" Padding="16" Background="{DynamicResource ControlFillColorSecondaryBrush}" CornerRadius="10">
                             <StackPanel>
-                                <ui:TextBlock Text="GRAPHICS" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
-                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.GpuName, FallbackValue='Detecting...'}" 
+                                <ui:TextBlock Text="{l:T main.graphics}" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
+                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.GpuName}" 
                                              FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap"/>
                                 <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.GpuMemory}" FontSize="12" Opacity="0.8" Margin="0,4,0,0"/>
                             </StackPanel>
@@ -124,11 +125,11 @@
                         <!-- Motherboard Section -->
                         <Border Margin="0,0,0,12" Padding="16" Background="{DynamicResource ControlFillColorSecondaryBrush}" CornerRadius="10">
                             <StackPanel>
-                                <ui:TextBlock Text="MOTHERBOARD" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
-                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.Motherboard, FallbackValue='Detecting...'}" 
+                                <ui:TextBlock Text="{l:T main.motherboard}" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
+                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.Motherboard}" 
                                              FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap"/>
-                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.BiosVersion, StringFormat='Version: {0}'}" FontSize="12" Opacity="0.8" Margin="0,4,0,0"/>
-                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.BiosDate, StringFormat='Date: {0}'}" FontSize="12" Opacity="0.6" Margin="0,2,0,0"/>
+                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.BiosVersion, Converter={StaticResource LocFormatConverter}, ConverterParameter=main.biosVersionFormat}" FontSize="12" Opacity="0.8" Margin="0,4,0,0"/>
+                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.BiosDate, Converter={StaticResource LocFormatConverter}, ConverterParameter=main.biosDateFormat}" FontSize="12" Opacity="0.6" Margin="0,2,0,0"/>
                                 
                                 <Grid Margin="0,12,0,0">
                                     <Grid.ColumnDefinitions>
@@ -136,14 +137,14 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     
-                                    <ui:Button Content="Check Update" 
+                                    <ui:Button Content="{l:T main.checkUpdate}" 
                                                Icon="{ui:SymbolIcon ArrowSync24}"
                                                Command="{Binding ViewModel.CheckBiosUpdateCommand}"
                                                HorizontalAlignment="Left"
                                                Appearance="Secondary" />
 
                                     <ui:Button Grid.Column="1" 
-                                               Content="Download" 
+                                               Content="{l:T main.download}" 
                                                Icon="{ui:SymbolIcon ArrowDownload24}"
                                                Command="{Binding ViewModel.DownloadBiosCommand}"
                                                Visibility="{Binding ViewModel.HardwareInfo.IsBiosUpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -155,8 +156,8 @@
                         <!-- RAM Section -->
                         <Border Margin="0,0,0,12" Padding="16" Background="{DynamicResource ControlFillColorSecondaryBrush}" CornerRadius="10">
                             <StackPanel>
-                                <ui:TextBlock Text="MEMORY" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
-                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.RamTotal, FallbackValue='Detecting...'}" 
+                                <ui:TextBlock Text="{l:T main.memory}" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
+                                <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.RamTotal}" 
                                              FontWeight="SemiBold" FontSize="15" Margin="0,0,0,8"/>
                                 <ItemsControl ItemsSource="{Binding ViewModel.HardwareInfo.RamSlots}">
                                     <ItemsControl.ItemTemplate>
@@ -192,7 +193,7 @@
                             </Border.Style>
                             <Grid>
                                 <StackPanel HorizontalAlignment="Left">
-                                    <ui:TextBlock Text="CPU TEMPERATURE" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
+                                    <ui:TextBlock Text="{l:T main.cpuTemperature}" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,6" />
                                     <ui:TextBlock FontWeight="Bold" FontSize="18" Foreground="{DynamicResource SystemFillColorCautionBrush}">
                                         <Run Text="{Binding ViewModel.HardwareInfo.CpuTemperature, StringFormat='{}{0:F1}°C', FallbackValue='--'}" />
                                     </ui:TextBlock>
@@ -204,7 +205,7 @@
                         <Separator Margin="0,2,0,4" Opacity="0.3"/>
 
                         <!-- Activation Section -->
-                        <ui:TextBlock Text="WINDOWS LICENSE" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="4,0,0,8" />
+                        <ui:TextBlock Text="{l:T main.windowsLicense}" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="4,0,0,8" />
                         <Border Background="{Binding ViewModel.HardwareInfo.IsWindowsActivated, Converter={StaticResource BooleanToActivationBgConverter}}"
                                 Padding="16"
                                 CornerRadius="12">
@@ -225,7 +226,7 @@
                                     <ui:TextBlock Text="{Binding ViewModel.HardwareInfo.WindowsEdition}" 
                                                  FontSize="11" Opacity="0.7" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,2,0,0"/>
                                     
-                                    <ui:Button Content="Activate Now" 
+                                    <ui:Button Content="{l:T main.activateNow}" 
                                                Command="{Binding ViewModel.ActivateCommand}"
                                                Visibility="{Binding ViewModel.HardwareInfo.IsWindowsActivated, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                                                Appearance="Primary"

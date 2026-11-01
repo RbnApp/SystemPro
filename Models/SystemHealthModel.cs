@@ -1,4 +1,5 @@
 using System;
+using RbnSystemPro.Services;
 
 namespace RbnSystemPro.Models
 {
@@ -6,7 +7,14 @@ namespace RbnSystemPro.Models
     {
         // Update Info
         public bool IsUpToDate { get; set; } = true;
-        public string LastUpdateCheck { get; set; } = "Never";
+        private string _lastUpdateCheck = string.Empty;
+
+        // DAPP-41: "hiç" durumu anahtarla çevrilir.
+        public string LastUpdateCheck
+        {
+            get => string.IsNullOrWhiteSpace(_lastUpdateCheck) ? Loc.T("security.lastUpdate.never") : _lastUpdateCheck;
+            set => _lastUpdateCheck = value;
+        }
         public int PendingUpdatesCount { get; set; } = 0;
 
         // Security Info

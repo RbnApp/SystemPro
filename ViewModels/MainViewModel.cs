@@ -12,7 +12,9 @@ namespace RbnSystemPro.ViewModels
         private readonly ILoggerService _logger;
         private readonly ITimelineService _timeline;
         private HardwareInfo _hardwareInfo = new();
-        private string _cpuCoreInfo = "Detecting...";
+        private int _cores;
+        private int _logicalProcessors;
+        private bool _hasCpuInfo;
         private bool _isBusy;
 
         public bool IsBusy
@@ -33,11 +35,10 @@ namespace RbnSystemPro.ViewModels
             set => SetProperty(ref _hardwareInfo, value);
         }
 
-        public string CpuCoreInfo
-        {
-            get => _cpuCoreInfo;
-            set => SetProperty(ref _cpuCoreInfo, value);
-        }
+        /// <summary>DAPP-41: değer anahtarla çevrilir; dil değişince bağ kendiliğinden tazelenir.</summary>
+        public string CpuCoreInfo => _hasCpuInfo
+            ? Loc.T("main.coreThread", _cores, _logicalProcessors)
+            : Loc.T("common.detecting");
 
         public MainViewModel(IHardwareService hardwareService, IAlertService alertService, ILoggerService logger, IBiosService biosService, ITimelineService timeline)
         {
@@ -64,11 +65,14 @@ namespace RbnSystemPro.ViewModels
             try
             {
                 HardwareInfo = await _hardwareService.GetSystemInfoAsync();
-                CpuCoreInfo = $"{HardwareInfo.NumberOfCores} Core / {HardwareInfo.NumberOfLogicalProcessors} Thread";
+                _cores = HardwareInfo.NumberOfCores;
+                _logicalProcessors = HardwareInfo.NumberOfLogicalProcessors;
+                _hasCpuInfo = true;
+                OnPropertyChanged(nameof(CpuCoreInfo));
             }
             catch (System.Exception ex)
             {
-                await _alertService.ShowErrorAsync("Hardware Analysis Error", "An error occurred while scanning system.", ex);
+                await _alertService.ShowErrorAsync(Loc.T("alert.hardwareErrorTitle"), Loc.T("alert.hardwareErrorMsg"), ex);
             }
         }
 
@@ -78,7 +82,7 @@ namespace RbnSystemPro.ViewModels
             {
                 // We use a Google Search workaround since scraping is not feasible universally
                 HardwareInfo.BiosUpdateUrl = _biosService.GetBiosSearchUrl(HardwareInfo.Motherboard, "");
-                HardwareInfo.BiosStatus = "Online Check"; 
+                HardwareInfo.BiosStatusKey = "hw.onlineCheck"; 
                 HardwareInfo.IsBiosUpdateAvailable = true;
                 
                 OnPropertyChanged(nameof(HardwareInfo));
@@ -121,7 +125,7 @@ namespace RbnSystemPro.ViewModels
                 System.Diagnostics.Process.Start("explorer.exe", "ms-settings:activation");
             }
 
-            _timeline.AddEvent("Activation Requested", "Windows Activation settings window has been opened for license check.", TimelineEventType.Info);
+            _timeline.AddEventKey("event.activation.title", "event.activation.desc", TimelineEventType.Info);
             return Task.CompletedTask;
         }
     }

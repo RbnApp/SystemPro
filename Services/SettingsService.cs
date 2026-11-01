@@ -7,7 +7,12 @@ namespace RbnSystemPro.Services
     public class AppSettings
     {
         public bool EnableDeepHardwareMonitoring { get; set; } = true;
-        // Add more settings here as needed
+
+        /// <summary>
+        /// Arayüz dili tercihi: "System" (varsayılan, Windows görüntü dili), "Turkish" ya da "English".
+        /// DAPP-41: değer tek yerde tutulur (LocalizationService.Save üzerinden yazılır).
+        /// </summary>
+        public string Language { get; set; } = "System";
     }
 
     public interface ISettingsService

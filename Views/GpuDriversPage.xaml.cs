@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -13,6 +13,7 @@ namespace RbnSystemPro.Views
     public partial class GpuDriversPage : Page
     {
         private readonly IGpuDriverService _gpuDriverService;
+        private RbnSystemPro.Models.HardwareInfo? _hardwareInfo;
         private readonly IHardwareService _hardwareService;
         private readonly ILoggerService _logger;
         private readonly IAlertService _alertService;
@@ -31,6 +32,12 @@ namespace RbnSystemPro.Views
             _alertService = alertService;
 
             Loaded += GpuDriversPage_Loaded;
+
+            // DAPP-41: dil değişince donanım metinleri (ör. GPU belleği) yeniden çevrilir.
+            Loc.LanguageChanged += (_, _) =>
+            {
+                if (_hardwareInfo != null) GpuMemoryText.Text = _hardwareInfo.GpuMemory;
+            };
         }
 
         private async void GpuDriversPage_Loaded(object sender, RoutedEventArgs e)
@@ -42,10 +49,11 @@ namespace RbnSystemPro.Views
         {
             try
             {
-                ShowLoading("Loading GPU drivers...");
+                ShowLoading(Loc.T("gpu.loadingGpuDrivers"));
 
                 // Get hardware info to detect current GPU
                 var hardwareInfo = await _hardwareService.GetSystemInfoAsync();
+                _hardwareInfo = hardwareInfo;
                 var gpuManufacturer = _gpuDriverService.DetectCurrentGpuManufacturer(hardwareInfo.GpuName);
 
                 // CurrentGpuText.Text = $"Detected GPU: {hardwareInfo.GpuName} ({gpuManufacturer})";
@@ -89,7 +97,7 @@ namespace RbnSystemPro.Views
             catch (Exception ex)
             {
                 await _logger.LogErrorAsync("Error loading GPU drivers", ex);
-                await _alertService.ShowErrorAsync("Error", "Failed to load GPU drivers. Please try again.");
+                await _alertService.ShowErrorAsync(Loc.T("alert.errorTitle"), Loc.T("gpu.loadFailed"));
                 HideLoading();
             }
         }
@@ -138,9 +146,9 @@ namespace RbnSystemPro.Views
         private void UpdateCurrentDriverUI(GpuDriverModel driver)
         {
             CurrentDriverName.Text = driver.Name;
-            CurrentDriverDesc.Text = driver.Description;
-            CurrentInstalledVersion.Text = driver.InstalledVersion;
-            CurrentLatestVersion.Text = driver.LatestVersion;
+            CurrentDriverDesc.Text = driver.DescriptionText;
+            CurrentInstalledVersion.Text = driver.InstalledVersionText;
+            CurrentLatestVersion.Text = driver.LatestVersionText;
             CurrentDriverTypeText.Text = driver.DriverType;
             CurrentManualDownloadButton.Tag = driver;
 
@@ -152,13 +160,13 @@ namespace RbnSystemPro.Views
                 {
                     CurrentUpdateButton.Visibility = Visibility.Visible;
                     CurrentStatusBadge.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFC107"));
-                    CurrentStatusText.Text = "Update Available";
+                    CurrentStatusText.Text = Loc.T("gpu.updateAvailable");
                 }
                 else
                 {
                     CurrentUpdateButton.Visibility = Visibility.Collapsed;
                     CurrentStatusBadge.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#28A745"));
-                    CurrentStatusText.Text = "Up to Date";
+                    CurrentStatusText.Text = Loc.T("gpu.upToDate");
                 }
             }
             else
@@ -166,7 +174,7 @@ namespace RbnSystemPro.Views
                 CurrentInstallButton.Visibility = Visibility.Visible;
                 CurrentUpdateButton.Visibility = Visibility.Collapsed;
                 CurrentStatusBadge.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#DC3545"));
-                CurrentStatusText.Text = "Not Installed";
+                CurrentStatusText.Text = Loc.T("gpu.notInstalled");
             }
         }
 
@@ -175,8 +183,8 @@ namespace RbnSystemPro.Views
             if (_currentGpuDriver == null) return;
 
             var result = await _alertService.ShowConfirmAsync(
-                "Install GPU Driver",
-                $"This will install {_currentGpuDriver.Name}. The installation will run silently in the background. Continue?");
+                Loc.T("gpu.installTitle"),
+                Loc.T("gpu.installConfirm", _currentGpuDriver.Name));
 
             if (result)
             {
@@ -189,8 +197,8 @@ namespace RbnSystemPro.Views
             if (_currentGpuDriver == null) return;
 
             var result = await _alertService.ShowConfirmAsync(
-                "Update GPU Driver",
-                $"This will update {_currentGpuDriver.Name} to the latest version. The update will run silently in the background. Continue?");
+                Loc.T("gpu.updateTitle"),
+                Loc.T("gpu.updateConfirm", _currentGpuDriver.Name));
 
             if (result)
             {
@@ -220,23 +228,23 @@ namespace RbnSystemPro.Views
                 UseShellExecute = true
             });
             
-            await _alertService.ShowSuccessAsync("Download Driver", 
-                "Your browser has been opened to the official download page. Please download and install the driver manually.");
+            await _alertService.ShowSuccessAsync(Loc.T("gpu.downloadOpenedTitle"),
+                Loc.T("gpu.downloadOpenedMsg"));
         }
 
         private async System.Threading.Tasks.Task InstallDriverAsync(GpuDriverModel driver)
         {
             try
             {
-                ShowLoading($"Installing {driver.Name}...");
+                ShowLoading(Loc.T("gpu.status.installing", driver.Name));
 
                 var success = await _gpuDriverService.InstallDriverAsync(driver);
 
                 if (success)
                 {
                     await _alertService.ShowSuccessAsync(
-                        "Installation Complete",
-                        $"{driver.Name} has been installed successfully. A system restart may be required.");
+                        Loc.T("gpu.installCompleteTitle"),
+                        Loc.T("gpu.installCompleteMsg", driver.Name));
                     
                     await LoadDriversAsync(); // Refresh the list
                 }
@@ -246,14 +254,14 @@ namespace RbnSystemPro.Views
                     if (driver.Manufacturer == "NVIDIA" || string.IsNullOrEmpty(driver.Id))
                     {
                         await _alertService.ShowWarningAsync(
-                            "Manual Download Required",
-                            $"{driver.Name} is not available through automated installation. Your browser has been opened to the official {driver.Manufacturer} download page. Please download and install the driver manually.");
+                            Loc.T("gpu.manualRequiredTitle"),
+                            Loc.T("gpu.manualInstallMsg", driver.Name, driver.Manufacturer));
                     }
                     else
                     {
                         await _alertService.ShowErrorAsync(
-                            "Installation Failed",
-                            $"Failed to install {driver.Name}. Please check the logs for details.");
+                            Loc.T("gpu.installFailedTitle"),
+                            Loc.T("gpu.installFailedMsg", driver.Name));
                     }
                 }
 
@@ -262,7 +270,7 @@ namespace RbnSystemPro.Views
             catch (Exception ex)
             {
                 await _logger.LogErrorAsync($"Error installing {driver.Name}", ex);
-                await _alertService.ShowErrorAsync("Error", $"An error occurred while installing {driver.Name}.");
+                await _alertService.ShowErrorAsync(Loc.T("alert.errorTitle"), Loc.T("gpu.installErrorMsg", driver.Name));
                 HideLoading();
             }
         }
@@ -271,15 +279,15 @@ namespace RbnSystemPro.Views
         {
             try
             {
-                ShowLoading($"Updating {driver.Name}...");
+                ShowLoading(Loc.T("gpu.status.updating", driver.Name));
 
                 var success = await _gpuDriverService.UpdateDriverAsync(driver);
 
                 if (success)
                 {
                     await _alertService.ShowSuccessAsync(
-                        "Update Complete",
-                        $"{driver.Name} has been updated successfully. A system restart may be required.");
+                        Loc.T("gpu.updateCompleteTitle"),
+                        Loc.T("gpu.updateCompleteMsg", driver.Name));
                     
                     await LoadDriversAsync(); // Refresh the list
                 }
@@ -289,14 +297,14 @@ namespace RbnSystemPro.Views
                     if (driver.Manufacturer == "NVIDIA" || string.IsNullOrEmpty(driver.Id))
                     {
                         await _alertService.ShowWarningAsync(
-                            "Manual Download Required",
-                            $"{driver.Name} updates are not available through automated installation. Your browser has been opened to the official {driver.Manufacturer} download page. Please download and install the latest driver manually.");
+                            Loc.T("gpu.manualRequiredTitle"),
+                            Loc.T("gpu.manualUpdateMsg", driver.Name, driver.Manufacturer));
                     }
                     else
                     {
                         await _alertService.ShowErrorAsync(
-                            "Update Failed",
-                            $"Failed to update {driver.Name}. Please check the logs for details.");
+                            Loc.T("gpu.updateFailedTitle"),
+                            Loc.T("gpu.updateFailedMsg", driver.Name));
                     }
                 }
 
@@ -305,7 +313,7 @@ namespace RbnSystemPro.Views
             catch (Exception ex)
             {
                 await _logger.LogErrorAsync($"Error updating {driver.Name}", ex);
-                await _alertService.ShowErrorAsync("Error", $"An error occurred while updating {driver.Name}.");
+                await _alertService.ShowErrorAsync(Loc.T("alert.errorTitle"), Loc.T("gpu.updateErrorMsg", driver.Name));
                 HideLoading();
             }
         }
@@ -334,9 +342,9 @@ namespace RbnSystemPro.Views
         {
             if (value is bool isInstalled)
             {
-                return isInstalled ? "Update Driver" : "Install Driver";
+                return isInstalled ? Loc.T("gpu.update") : Loc.T("gpu.install");
             }
-            return "Install Driver";
+            return Loc.T("gpu.install");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

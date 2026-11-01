@@ -176,7 +176,7 @@ namespace RbnSystemPro.Services
                             foreach (var d in driveSearcher.Get())
                             {
                                 string deviceId = d["DeviceID"]?.ToString() ?? "";
-                                string modelName = d["Model"]?.ToString() ?? "Physical Drive";
+                                string modelName = d["Model"]?.ToString() ?? Loc.T("perf.physicalDrive");
                                 string mediaType = d["MediaType"]?.ToString() ?? "";
                                 string status = d["Status"]?.ToString() ?? "OK";
                             
@@ -248,7 +248,7 @@ namespace RbnSystemPro.Services
                                 var diskInfo = new DiskDriveInfo
                                 {
                                     Name = drive.Name,
-                                    Label = string.IsNullOrEmpty(drive.VolumeLabel) ? "Local Disk" : drive.VolumeLabel,
+                                    Label = string.IsNullOrEmpty(drive.VolumeLabel) ? Loc.T("perf.localDisk") : drive.VolumeLabel,
                                     TotalSizeGB = Math.Round(drive.TotalSize / (1024.0 * 1024 * 1024), 1),
                                     FreeSpaceGB = Math.Round(drive.AvailableFreeSpace / (1024.0 * 1024 * 1024), 1),
                                     Format = drive.DriveFormat,
@@ -269,7 +269,7 @@ namespace RbnSystemPro.Services
                                 if (driveToStatusOk.TryGetValue(cleanName, out bool statusOk))
                                 {
                                     diskInfo.Health = statusOk ? 100 : (int?)null;
-                                    diskInfo.DriveStatus = statusOk ? "OK" : "Not OK";
+                                    diskInfo.DriveStatusKey = statusOk ? "perf.ok" : "perf.notOk";
                                 }
                                 diskInfo.Temperature = null;
 
@@ -356,11 +356,11 @@ namespace RbnSystemPro.Services
                 {
                     // Environment.TickCount64 gives ms since system started, ignoring Fast Startup's kernel hibernation
                     var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
-                    model.Uptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
+                    model.UptimeValue = uptime;
                 }
                 catch (Exception ex)
                 {
-                    model.Uptime = "Unknown";
+                    model.UptimeValue = null;
                     _ = _logger.LogWarningAsync($"Çalışma süresi hesaplanamadı: {ex.Message}");
                 }
 

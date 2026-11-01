@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:RbnSystemPro.Helpers"
       xmlns:local="clr-namespace:RbnSystemPro.Views"
       xmlns:helpers="clr-namespace:RbnSystemPro.Helpers"
       xmlns:models="clr-namespace:RbnSystemPro.Models"
@@ -33,8 +34,8 @@
                     <ui:SymbolIcon Symbol="History24" FontSize="32" Foreground="#76B900"/>
                 </Border>
                 <StackPanel VerticalAlignment="Center">
-                    <ui:TextBlock Text="System Activity Timeline" FontSize="26" FontWeight="Bold" Foreground="White" />
-                    <ui:TextBlock Text="Trace of all actions performed by RbnSystemPro" FontSize="14" Opacity="0.6" Foreground="White" />
+                    <ui:TextBlock Text="{l:T timeline.title}" FontSize="26" FontWeight="Bold" Foreground="White" />
+                    <ui:TextBlock Text="{l:T timeline.subtitle}" FontSize="14" Opacity="0.6" Foreground="White" />
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -42,13 +43,13 @@
         <!-- Main Timeline Content -->
         <Grid Grid.Row="1" Margin="28,0,28,40">
             <!-- Empty State -->
-            <StackPanel x:Name="EmptyStatePanel" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
+            <StackPanel x:Name="EmptyStatePanel" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="Collapsed">
                 <ui:SymbolIcon Symbol="History24" FontSize="64" Opacity="0.3" Margin="0,0,0,20" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                <ui:TextBlock Text="No Activity Recorded Yet" 
-                              FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" 
+                <ui:TextBlock Text="{l:T timeline.emptyTitle}" 
+                              FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" Width="820" TextWrapping="Wrap" TextAlignment="Center" 
                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                <ui:TextBlock Text="Use RbnSystemPro to install programs or optimize your system. Your history will appear here." 
-                              FontSize="14" HorizontalAlignment="Center" 
+                <ui:TextBlock Text="{l:T timeline.emptyDesc}" 
+                              FontSize="14" HorizontalAlignment="Center" Width="820" TextWrapping="Wrap" 
                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Opacity="0.7" Margin="0,8,0,0"
                               TextAlignment="Center"/>
             </StackPanel>
@@ -87,8 +88,8 @@
                                              </Grid.ColumnDefinitions>
                                              
                                              <StackPanel Grid.Column="0">
-                                                 <ui:TextBlock Text="{Binding Title}" FontSize="16" FontWeight="Bold"/>
-                                                 <ui:TextBlock Text="{Binding Description}" FontSize="13" Opacity="0.7" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                                 <ui:TextBlock Text="{Binding TitleText}" FontSize="16" FontWeight="Bold"/>
+                                                 <ui:TextBlock Text="{Binding DescriptionText}" FontSize="13" Opacity="0.7" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                              </StackPanel>
 
                                              <StackPanel Grid.Column="1" VerticalAlignment="Top" Opacity="0.5">

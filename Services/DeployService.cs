@@ -46,7 +46,7 @@ namespace RbnSystemPro.Services
                     process?.WaitForExit();
                 });
 
-                _timeline.AddEvent("Raphire WinDeploy Run", "The Raphire WinDeploy tool was executed to provide advanced system optimization.", TimelineEventType.Optimization);
+                _timeline.AddEventKey("event.deploy.title", "event.deploy.desc", TimelineEventType.Optimization);
                 return true;
             }
             catch (Exception ex)

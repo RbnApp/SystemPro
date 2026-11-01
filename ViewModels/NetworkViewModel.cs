@@ -11,7 +11,9 @@ namespace RbnSystemPro.ViewModels
         private readonly IAlertService _alertService;
         private readonly ITimelineService _timelineService;
         private bool _isBusy;
-        private string _statusMessage = "Ready";
+        // DAPP-41: durum metni anahtar + argüman; dil değişince kendiliğinden çevrilir.
+        private string _statusKey = "network.status.ready";
+        private object?[] _statusArgs = System.Array.Empty<object?>();
         private string _connectionType = "Checking...";
         private string _connectionName = "";
         private System.Collections.ObjectModel.ObservableCollection<string> _wifiNetworks = new();
@@ -26,23 +28,57 @@ namespace RbnSystemPro.ViewModels
             set => SetProperty(ref _isBusy, value);
         }
 
-        public string StatusMessage
+        public string StatusMessage => Loc.T(_statusKey, _statusArgs);
+
+        private void SetStatus(string key, params object?[] args)
         {
-            get => _statusMessage;
-            set => SetProperty(ref _statusMessage, value);
+            _statusKey = key;
+            _statusArgs = args;
+            OnPropertyChanged(nameof(StatusMessage));
         }
 
         public string ConnectionType
         {
             get => _connectionType;
-            set => SetProperty(ref _connectionType, value);
+            set
+            {
+                SetProperty(ref _connectionType, value);
+                OnPropertyChanged(nameof(ConnectionTypeText));
+                OnPropertyChanged(nameof(ConnectionSummaryText));
+            }
         }
 
         public string ConnectionName
         {
             get => _connectionName;
-            set => SetProperty(ref _connectionName, value);
+            set
+            {
+                SetProperty(ref _connectionName, value);
+                OnPropertyChanged(nameof(ConnectionNameText));
+                OnPropertyChanged(nameof(ConnectionSummaryText));
+            }
         }
+
+        /// <summary>Bağlantı adı; servis "None"/"Error" döndürdüğünde çevrilir.</summary>
+        public string ConnectionNameText => _connectionName switch
+        {
+            "None" => Loc.T("network.status.none"),
+            "Error" => Loc.T("alert.errorTitle"),
+            _ => _connectionName
+        };
+
+        /// <summary>Bağlantı türü; servis kodları ("WiFi"/"LAN") olduğu gibi, durum sözcükleri çevrilir.</summary>
+        public string ConnectionTypeText => _connectionType switch
+        {
+            "Disconnected" => Loc.T("network.status.disconnected"),
+            "Unknown" => Loc.T("common.unknown"),
+            "Error" => Loc.T("alert.errorTitle"),
+            "Checking..." => Loc.T("network.status.checking"),
+            _ => _connectionType
+        };
+
+        /// <summary>Rozetteki "tür - ad" satırı (Run bağları XAML'de çöküyordu, tek metin olarak verilir).</summary>
+        public string ConnectionSummaryText => $"{ConnectionTypeText} - {ConnectionName}";
 
         public System.Collections.ObjectModel.ObservableCollection<string> WifiNetworks
         {
@@ -113,31 +149,30 @@ namespace RbnSystemPro.ViewModels
             _alertService = alertService;
             _timelineService = timelineService;
 
-            FlushDnsCommand = new DelegateCommand(async () => await ExecuteAsync(_networkService.FlushDnsAsync, "DNS cache flushed."));
+            FlushDnsCommand = new DelegateCommand(async () => await ExecuteAsync(_networkService.FlushDnsAsync, "network.msg.flushDns"));
             ResetNetworkCommand = new DelegateCommand(async () =>
             {
                 // Hard Reset: bağlantı kesilir ve yığın sıfırlanır — onaysız çalışmaz (denetim #13).
                 bool confirmed = await _alertService.ShowConfirmAsync(
-                    "Ağ Yığınını Sıfırla",
-                    "Winsock ve TCP/IP sıfırlanacak, IP adresi yenilenecek. İnternet bağlantısı birkaç " +
-                    "saniye kesilecek ve yeniden başlatma önerilir.\n\nDevam edilsin mi?");
+                    Loc.T("network.confirmResetTitle"),
+                    Loc.T("network.confirmResetMsg"));
 
                 if (!confirmed)
                 {
-                    StatusMessage = "Sıfırlama iptal edildi.";
+                    SetStatus("network.resetCancelled");
                     return;
                 }
 
-                await ExecuteAsync(_networkService.ResetNetworkStackAsync, "Network stack reset. System restart recommended.");
+                await ExecuteAsync(_networkService.ResetNetworkStackAsync, "network.msg.reset");
             });
-            OptimizeTcpCommand = new DelegateCommand(async () => await ExecuteAsync(_networkService.OptimizeTcpStackAsync, "TCP stack optimized."));
-            SetGoogleDnsCommand = new DelegateCommand(async () => await ExecuteAsync(() => _networkService.SetDnsAsync("8.8.8.8", "8.8.4.4"), "Google DNS applied."));
-            SetCloudflareDnsCommand = new DelegateCommand(async () => await ExecuteAsync(() => _networkService.SetDnsAsync("1.1.1.1", "1.0.0.1"), "Cloudflare DNS applied."));
+            OptimizeTcpCommand = new DelegateCommand(async () => await ExecuteAsync(_networkService.OptimizeTcpStackAsync, "network.msg.tcp"));
+            SetGoogleDnsCommand = new DelegateCommand(async () => await ExecuteAsync(() => _networkService.SetDnsAsync("8.8.8.8", "8.8.4.4"), "network.msg.googleDns"));
+            SetCloudflareDnsCommand = new DelegateCommand(async () => await ExecuteAsync(() => _networkService.SetDnsAsync("1.1.1.1", "1.0.0.1"), "network.msg.cloudflareDns"));
             RefreshNetworksCommand = new DelegateCommand(async () => await RefreshStatusAsync());
             ConnectToWifiCommand = new DelegateCommand<string>(async (ssid) => {
                 if (!string.IsNullOrEmpty(ssid)) 
                 {
-                    bool success = await ExecuteAsync(() => _networkService.ConnectToWifiAsync(ssid, ""), $"Attempting to connect to {ssid}...");
+                    bool success = await ExecuteAsync(() => _networkService.ConnectToWifiAsync(ssid, ""), "network.msg.connecting", args: new object?[] { ssid });
                     if (success)
                     {
                         await Task.Delay(4000);
@@ -166,9 +201,10 @@ namespace RbnSystemPro.ViewModels
                 if (!string.IsNullOrEmpty(ssid))
                 {
                     bool success = await ExecuteAsync(
-                        () => _networkService.ConnectToWifiAsync(ssid, password, auto), 
-                        $"Attempting to connect to {ssid}...",
-                        "Connection failed. Please verify the password and try again."
+                        () => _networkService.ConnectToWifiAsync(ssid, password, auto),
+                        "network.msg.connecting",
+                        "network.msg.connectFailed",
+                        new object?[] { ssid }
                     );
 
                     if (success)
@@ -184,12 +220,12 @@ namespace RbnSystemPro.ViewModels
                 if (string.IsNullOrEmpty(ConnectedWifiSsid)) return;
                 
                 string? pass = await _networkService.GetWifiPasswordAsync(ConnectedWifiSsid);
-                CurrentWifiPassword = pass ?? "Could not retrieve password.";
+                CurrentWifiPassword = pass ?? Loc.T("network.msg.noPassword");
                 IsPasswordInfoModalVisible = true;
             });
 
             DisconnectCommand = new DelegateCommand(async () => {
-                await ExecuteAsync(_networkService.DisconnectWifiAsync, "Disconnected from WiFi.");
+                await ExecuteAsync(_networkService.DisconnectWifiAsync, "network.msg.disconnected");
                 await RefreshStatusAsync();
             });
 
@@ -227,27 +263,31 @@ namespace RbnSystemPro.ViewModels
             }
         }
 
-        private async Task<bool> ExecuteAsync(System.Func<Task<bool>> action, string successMessage, string? failureMessage = null)
+        /// <summary>
+        /// DAPP-41: mesajlar ANAHTAR olarak alınır; ekrana ve etkinlik kaydına çevrilerek yazılır.
+        /// </summary>
+        private async Task<bool> ExecuteAsync(System.Func<Task<bool>> action, string successKey, string? failureKey = null, object?[]? args = null)
         {
             if (IsBusy) return false;
             IsBusy = true;
-            StatusMessage = "Processing...";
+            SetStatus("network.status.processing");
 
             bool success = await action();
 
             IsBusy = false;
-            StatusMessage = success ? "Success" : "Failed";
+            SetStatus(success ? "network.status.success" : "network.status.failed");
 
             if (success)
             {
-                _timelineService.AddEvent("Network Optimizer", successMessage, RbnSystemPro.Models.TimelineEventType.Success);
-                await _alertService.ShowSuccessAsync("Success", successMessage);
+                var msg = Loc.T(successKey, args ?? System.Array.Empty<object?>());
+                _timelineService.AddEvent(Loc.T("network.title"), msg, RbnSystemPro.Models.TimelineEventType.Success);
+                await _alertService.ShowSuccessAsync(Loc.T("alert.successTitle"), msg);
             }
             else
             {
-                string msg = failureMessage ?? "Action failed. Please run as administrator.";
-                _timelineService.AddEvent("Network Optimizer", msg, RbnSystemPro.Models.TimelineEventType.Error);
-                await _alertService.ShowErrorAsync("Error", msg);
+                var msg = Loc.T(failureKey ?? "network.msg.actionFailed", args ?? System.Array.Empty<object?>());
+                _timelineService.AddEvent(Loc.T("network.title"), msg, RbnSystemPro.Models.TimelineEventType.Error);
+                await _alertService.ShowErrorAsync(Loc.T("alert.errorTitle"), msg);
             }
             return success;
         }

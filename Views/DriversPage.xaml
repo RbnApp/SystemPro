@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:RbnSystemPro.Helpers"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1000"
       Title="DriversPage">
@@ -23,8 +24,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <ui:TextBlock Text="Essential Drivers" FontTypography="TitleLarge" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                    <ui:TextBlock Text="Install missing chipset, audio, and network drivers for your hardware." 
+                    <ui:TextBlock Text="{l:T drivers.title}" FontTypography="TitleLarge" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <ui:TextBlock Text="{l:T drivers.subtitle}" 
                                  FontTypography="Body" Opacity="0.7" Margin="0,4,0,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
 
@@ -33,16 +34,16 @@
                     <StackPanel Orientation="Horizontal" 
                                 Visibility="{Binding ViewModel.IsWingetInstalled, Converter={StaticResource BooleanToVisibilityConverter}}">
                          <ui:SymbolIcon Symbol="CheckmarkCircle24" FontSize="16" Foreground="#28A745" Margin="0,0,4,0"/>
-                         <TextBlock Text="WINGET READY" FontSize="11" FontWeight="Bold" Foreground="#28A745" VerticalAlignment="Center"/>
+                         <TextBlock Text="{l:T drivers.wingetReady}" FontSize="11" FontWeight="Bold" Foreground="#28A745" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <!-- Winget Missing -->
                     <StackPanel Orientation="Horizontal"
                                 Visibility="{Binding ViewModel.IsWingetInstalled, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                          <ui:SymbolIcon Symbol="DismissCircle24" FontSize="16" Foreground="#DC3545" Margin="0,0,4,0"/>
-                         <TextBlock Text="WINGET MISSING" FontSize="11" FontWeight="Bold" Foreground="#DC3545" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                         <TextBlock Text="{l:T drivers.wingetMissing}" FontSize="11" FontWeight="Bold" Foreground="#DC3545" VerticalAlignment="Center" Margin="0,0,8,0"/>
                          
-                         <ui:Button Content="ENABLE NOW" 
+                         <ui:Button Content="{l:T common.enableNow}" 
                                     FontSize="10" 
                                     Padding="8,2" 
                                     Appearance="Primary"
@@ -72,10 +73,10 @@
                                 </Grid>
                                 
                                 <ui:TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Margin="0,0,0,4"/>
-                                <ui:TextBlock Text="{Binding Description}" FontSize="12" Opacity="0.7" TextWrapping="Wrap" Height="40"/>
-                                <ui:TextBlock Text="{Binding Status}" FontSize="11" Margin="0,12,0,8" Opacity="0.5"/>
+                                <ui:TextBlock Text="{Binding DescriptionKey, Converter={StaticResource LocKeyConverter}}" FontSize="12" Opacity="0.7" TextWrapping="Wrap" Height="40"/>
+                                <ui:TextBlock Text="{Binding StatusKey, Converter={StaticResource LocKeyConverter}}" FontSize="11" Margin="0,12,0,8" Opacity="0.5"/>
                                 
-                                <ui:Button Content="Install Driver" 
+                                <ui:Button Content="{l:B drivers.install}" 
                                            HorizontalAlignment="Stretch"
                                            Command="{Binding ViewModel.InstallCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                            CommandParameter="{Binding}"

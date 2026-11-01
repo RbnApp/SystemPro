@@ -19,12 +19,33 @@ namespace RbnSystemPro.Views
 
             InitializeComponent();
 
+            // DAPP-41: dil değişince pencere ve açık sayfa bağları tazelenir.
+            Loc.LanguageChanged += OnLanguageChanged;
+
+            // DAPP-41 doğrulama: yalnız --layout-audit ile açıldığında sayfa ölçümü yapar.
+            LayoutAudit.Attach(RootFrame);
+
             // Initial navigation after window is fully loaded and visual tree is ready
             Loaded += (s, e) => 
             {
                 // Delay slightly to ensure Frame is fully initialized
                 Dispatcher.BeginInvoke(new Action(() => Navigate(typeof(DashboardPage))));
             };
+        }
+
+        private void OnLanguageChanged(object? sender, EventArgs e)
+        {
+            // DataContext'i yeniden vermek WPF'e "tüm bağları yeniden oku" der.
+            var dc = DataContext;
+            DataContext = null;
+            DataContext = dc;
+
+            if (RootFrame.Content is FrameworkElement page && page.DataContext != null)
+            {
+                var pageDc = page.DataContext;
+                page.DataContext = null;
+                page.DataContext = pageDc;
+            }
         }
 
         private void OnHomeButtonClick(object sender, RoutedEventArgs e)
@@ -55,12 +76,12 @@ namespace RbnSystemPro.Views
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show($"Could not resolve page type: {pageType.Name}", "Navigation Error");
+                    System.Windows.MessageBox.Show(Loc.T("internal.pageResolveError", pageType.Name), Loc.T("internal.navigationErrorTitle"));
                 }
             }
             catch (Exception ex)
             {
-                 System.Windows.MessageBox.Show($"Navigation failed for {pageType.Name}: {ex.Message}\n\n{ex.StackTrace}", "Critical Navigation Error");
+                 System.Windows.MessageBox.Show(Loc.T("internal.navigationFailed", pageType.Name, ex.Message), Loc.T("alert.criticalErrorTitle"));
             }
         }
     }

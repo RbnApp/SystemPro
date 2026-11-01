@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:RbnSystemPro.Helpers"
       xmlns:local="clr-namespace:RbnSystemPro.Views"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1000"
@@ -19,8 +20,8 @@
         <!-- Header -->
         <Grid Grid.Row="0" Margin="24,24,24,12">
             <StackPanel Orientation="Vertical">
-                <ui:TextBlock Text="Software Manager" FontTypography="TitleLarge" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                <ui:TextBlock Text="Select essential applications to install automatically." 
+                <ui:TextBlock Text="{l:T programs.title}" FontTypography="TitleLarge" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                <ui:TextBlock Text="{l:T programs.subtitle}" 
                               FontTypography="Body" Opacity="0.7" Margin="0,4,0,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 
                 <!-- Category Tabs -->
@@ -50,7 +51,7 @@
                                                 BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                                                 BorderThickness="1"
                                                 Padding="{TemplateBinding Padding}">
-                                            <TextBlock Text="{TemplateBinding Content}" 
+                                            <TextBlock Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LocKeyConverter}}" 
                                                        Foreground="{TemplateBinding Foreground}"
                                                        FontSize="{TemplateBinding FontSize}"
                                                        FontWeight="{TemplateBinding FontWeight}"
@@ -90,22 +91,22 @@
                     CornerRadius="16"
                     Padding="12,6">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="winget status:" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#FFC107" Opacity="0.8"/>
+                    <TextBlock Text="{l:T programs.wingetStatus}" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#FFC107" Opacity="0.8"/>
                     
                     <!-- Success State -->
                     <StackPanel Orientation="Horizontal" 
                                 Visibility="{Binding ViewModel.IsWingetInstalled, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=Page}}">
                          <ui:SymbolIcon Symbol="CheckmarkCircle24" FontSize="16" Foreground="#28A745" Margin="0,0,4,0"/>
-                         <TextBlock Text="READY" FontSize="11" FontWeight="Bold" Foreground="#28A745" VerticalAlignment="Center"/>
+                         <TextBlock Text="{l:T common.ready}" FontSize="11" FontWeight="Bold" Foreground="#28A745" VerticalAlignment="Center"/>
                     </StackPanel>
                     
                     <!-- Error State -->
                     <StackPanel Orientation="Horizontal"
                                 Visibility="{Binding ViewModel.IsWingetInstalled, Converter={StaticResource InverseBooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=Page}}">
                          <ui:SymbolIcon Symbol="DismissCircle24" FontSize="16" Foreground="#DC3545" Margin="0,0,4,0"/>
-                         <TextBlock Text="MISSING" FontSize="11" FontWeight="Bold" Foreground="#DC3545" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                         <TextBlock Text="{l:T common.missing}" FontSize="11" FontWeight="Bold" Foreground="#DC3545" VerticalAlignment="Center" Margin="0,0,8,0"/>
                          
-                         <ui:Button Content="ENABLE NOW" 
+                         <ui:Button Content="{l:T common.enableNow}" 
                                     FontSize="10" 
                                     Padding="8,2" 
                                     Appearance="Primary"
@@ -121,7 +122,7 @@
             <ItemsControl ItemsSource="{Binding ViewModel.Programs}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" ItemWidth="230" ItemHeight="260" />
+                        <WrapPanel Orientation="Horizontal" ItemWidth="230" ItemHeight="300" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -152,13 +153,13 @@
                                     
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                                                 Visibility="{Binding IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                         <TextBlock Text="INSTALLED" FontSize="10" FontWeight="Bold" Foreground="LimeGreen" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                         <TextBlock Text="{l:B programs.installedBadge}" FontSize="10" FontWeight="Bold" Foreground="LimeGreen" VerticalAlignment="Center" Margin="0,0,6,0"/>
                                          <ui:SymbolIcon Symbol="CheckmarkCircle24" 
                                                         Foreground="LimeGreen" FontSize="18" Margin="0,0,8,0"/>
                                          
                                          <!-- Uninstall Button -->
                                          <ui:Button Icon="{ui:SymbolIcon Delete24}" 
-                                                    ToolTip="Uninstall (Deep Clean)"
+                                                    ToolTip="{l:B programs.uninstallTooltip}"
                                                     Appearance="Danger"
                                                     FontSize="10"
                                                     Padding="6,4"
@@ -169,7 +170,7 @@
                                 </Grid>
 
                                 <!-- Content -->
-                                <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <StackPanel Grid.Row="1" VerticalAlignment="Center">
                                     <!-- Icon with Brand Color -->
                                     <Grid Width="64" Height="64" Margin="0,0,0,16">
                                         <Ellipse Fill="{Binding HexColor}" Opacity="0.15" />
@@ -182,13 +183,13 @@
                                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                                TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,6"/>
                                     
-                                    <TextBlock Text="{Binding Description}" FontSize="12" 
+                                    <TextBlock Text="{Binding DescriptionKey, Converter={StaticResource LocKeyConverter}}" FontSize="12" 
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                                TextAlignment="Center" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <!-- Footer Status Text -->
-                                <TextBlock Grid.Row="2" Text="{Binding Status}" 
+                                <TextBlock Grid.Row="2" Text="{Binding StatusKey, Converter={StaticResource LocKeyConverter}}" 
                                            HorizontalAlignment="Center" 
                                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                                            FontSize="11" Margin="0,8,0,0"/>
@@ -219,7 +220,7 @@
                 </StackPanel>
 
                 <ui:Button Grid.Column="1" 
-                           Content="Install Selected" 
+                           Content="{l:T programs.installSelected}" 
                            Icon="{ui:SymbolIcon ArrowDownload24}" 
                            Appearance="Primary"
                            Command="{Binding ViewModel.InstallCommand}"

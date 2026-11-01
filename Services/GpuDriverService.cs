@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -63,7 +63,7 @@ namespace RbnSystemPro.Services
                 Id = "", // not in winget (verified); NVIDIA is always a manual download
                 DriverType = "Game Ready",
                 Manufacturer = "NVIDIA",
-                Description = "Official NVIDIA GeForce driver with Game Ready optimizations for the best gaming experience.",
+                DescriptionKey = "gpu.nvidiaGameReady.desc",
                 IconSymbol = "DeveloperBoard24",
                 HexColor = "#76B900",
                 DownloadUrl = "https://www.nvidia.com/Download/index.aspx"
@@ -74,7 +74,7 @@ namespace RbnSystemPro.Services
                 Id = "", // not in winget (verified); NVIDIA is always a manual download
                 DriverType = "Studio",
                 Manufacturer = "NVIDIA",
-                Description = "Official NVIDIA Studio driver providing the best stability and performance for creative apps.",
+                DescriptionKey = "gpu.nvidiaStudio.desc",
                 IconSymbol = "Shapes24",
                 HexColor = "#76B900",
                 DownloadUrl = "https://www.nvidia.com/Download/index.aspx?lang=en-us"
@@ -87,7 +87,7 @@ namespace RbnSystemPro.Services
                 Id = "", // not in winget (verified); AMD is a manual download
                 Manufacturer = "AMD",
                 DriverType = "WHQL",
-                Description = "AMD Radeon Software Adrenalin Edition with performance tuning and gaming features.",
+                DescriptionKey = "gpu.amdAdrenalin.desc",
                 IconSymbol = "DeveloperBoard24",
                 HexColor = "#ED1C24",
                 DownloadUrl = "https://www.amd.com/en/support/download/drivers.html",
@@ -100,7 +100,7 @@ namespace RbnSystemPro.Services
                 Name = "Intel Graphics Driver",
                 Id = "", // not in winget (verified); Intel is a manual download
                 Manufacturer = "Intel",
-                Description = "Intel Graphics Driver for integrated and discrete GPUs.",
+                DescriptionKey = "gpu.intelGraphics.desc",
                 IconSymbol = "DeveloperBoard24",
                 HexColor = "#0071C5",
                 DownloadUrl = "https://www.intel.com/content/www/us/en/download-center/home.html",
@@ -168,6 +168,7 @@ namespace RbnSystemPro.Services
                                 if (parts.Length >= 3)
                                 {
                                     driver.InstalledVersion = parts[2];
+                                    driver.InstalledVersionKey = "status.installed";
                                 }
                                 break;
                             }
@@ -215,7 +216,8 @@ namespace RbnSystemPro.Services
                 }
                 else
                 {
-                    driver.InstalledVersion = "Not Installed";
+                    driver.InstalledVersion = null;
+                driver.InstalledVersionKey = "gpu.notInstalled";
                     driver.UpdateAvailable = false;
                 }
             }
@@ -223,7 +225,8 @@ namespace RbnSystemPro.Services
             {
                 await _logger.LogErrorAsync($"Error checking driver status for {driver.Name}", ex);
                 driver.IsInstalled = false;
-                driver.InstalledVersion = "Error";
+                driver.InstalledVersion = null;
+                driver.InstalledVersionKey = "gpu.error";
             }
         }
 
@@ -292,7 +295,8 @@ namespace RbnSystemPro.Services
             if (driver.DetectionNames.Length == 0)
             {
                 driver.IsInstalled = false;
-                driver.InstalledVersion = "Not Installed";
+                driver.InstalledVersion = null;
+                driver.InstalledVersionKey = "gpu.notInstalled";
                 return;
             }
 
@@ -305,7 +309,8 @@ namespace RbnSystemPro.Services
                 if (string.IsNullOrEmpty(listOutput))
                 {
                     driver.IsInstalled = false;
-                    driver.InstalledVersion = "Not Installed";
+                    driver.InstalledVersion = null;
+                driver.InstalledVersionKey = "gpu.notInstalled";
                     return;
                 }
 
@@ -317,7 +322,8 @@ namespace RbnSystemPro.Services
                         if (!name.Contains(keyword, StringComparison.OrdinalIgnoreCase)) continue;
 
                         driver.IsInstalled = true;
-                        driver.InstalledVersion = string.IsNullOrEmpty(version) ? "Installed" : version;
+                        driver.InstalledVersion = string.IsNullOrEmpty(version) ? null : version;
+                        driver.InstalledVersionKey = "status.installed";
                         return;
                     }
                 }
@@ -325,12 +331,14 @@ namespace RbnSystemPro.Services
             catch (Exception ex)
             {
                 await _logger.LogErrorAsync($"Error checking driver status for {driver.Name}", ex);
-                driver.InstalledVersion = "Error";
+                driver.InstalledVersion = null;
+                driver.InstalledVersionKey = "gpu.error";
                 return;
             }
 
             driver.IsInstalled = false;
-            driver.InstalledVersion = "Not Installed";
+            driver.InstalledVersion = null;
+                driver.InstalledVersionKey = "gpu.notInstalled";
         }
 
         /// <summary>
@@ -517,19 +525,22 @@ namespace RbnSystemPro.Services
                     {
                         driver.IsInstalled = true;
                         driver.InstalledVersion = finalVersion;
+                        driver.InstalledVersionKey = "status.installed";
                         await _logger.LogInfoAsync($"NVIDIA {driver.DriverType} detected: {finalVersion}");
                     }
                     else
                     {
                         driver.IsInstalled = false;
-                        driver.InstalledVersion = "Not Installed";
+                        driver.InstalledVersion = null;
+                driver.InstalledVersionKey = "gpu.notInstalled";
                         driver.UpdateAvailable = false;
                     }
                 }
                 else
                 {
                     driver.IsInstalled = false;
-                    driver.InstalledVersion = "Not Installed";
+                    driver.InstalledVersion = null;
+                driver.InstalledVersionKey = "gpu.notInstalled";
                     driver.UpdateAvailable = false;
                 }
 
@@ -539,9 +550,9 @@ namespace RbnSystemPro.Services
                 {
                     driver.LatestVersion = latestVersion;
                     
-                    if (driver.IsInstalled && !string.IsNullOrEmpty(driver.InstalledVersion) && driver.InstalledVersion != "Installed (Version Unknown)")
+                    if (driver.IsInstalled && driver.HasKnownVersion)
                     {
-                        if (CompareVersions(driver.InstalledVersion, latestVersion) < 0)
+                        if (CompareVersions(driver.InstalledVersion!, latestVersion) < 0)
                         {
                             driver.UpdateAvailable = true;
                         }
@@ -765,7 +776,7 @@ namespace RbnSystemPro.Services
                     if (process.ExitCode == 0)
                     {
                         await _logger.LogInfoAsync($"Successfully installed {driver.Name}.");
-                        _timeline.AddEvent($"{driver.Name} Installed", $"Official {driver.Manufacturer} driver has been successfully installed.", TimelineEventType.Installation);
+                        _timeline.AddEventKey("event.driverInstalled.title", "event.gpuInstalled.desc", TimelineEventType.Installation, new[] { driver.Name }, new[] { driver.Manufacturer });
                         return true;
                     }
                     else
@@ -825,7 +836,7 @@ namespace RbnSystemPro.Services
                     if (process.ExitCode == 0)
                     {
                         await _logger.LogInfoAsync($"Successfully updated {driver.Name}.");
-                        _timeline.AddEvent($"{driver.Name} Updated", $"Driver has been updated to the latest version ({driver.LatestVersion}).", TimelineEventType.Installation);
+                        _timeline.AddEventKey("event.gpuUpdated.title", "event.gpuUpdated.desc", TimelineEventType.Installation, new[] { driver.Name }, new[] { driver.LatestVersion ?? string.Empty });
                         return true;
                     }
                     else

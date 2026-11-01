@@ -35,7 +35,9 @@ namespace RbnSystemPro.Services
                             RamTotal = _cachedStaticInfo.RamTotal,
                             Motherboard = _cachedStaticInfo.Motherboard,
                             GpuName = _cachedStaticInfo.GpuName,
-                            GpuMemory = _cachedStaticInfo.GpuMemory,
+                            GpuDedicatedGb = _cachedStaticInfo.GpuDedicatedGb,
+                            GpuSharedGb = _cachedStaticInfo.GpuSharedGb,
+                            GpuTotalGb = _cachedStaticInfo.GpuTotalGb,
                             BiosVersion = _cachedStaticInfo.BiosVersion,
                             BiosDate = _cachedStaticInfo.BiosDate,
                             NumberOfCores = _cachedStaticInfo.NumberOfCores,
@@ -65,7 +67,7 @@ namespace RbnSystemPro.Services
                     {
                         foreach (var obj in searcher.Get())
                         {
-                            var rawName = obj["Name"]?.ToString() ?? "Unknown";
+                            var rawName = obj["Name"]?.ToString() ?? string.Empty;
                             info.CpuName = HardwareConstants.SimplifyCpuName(rawName);
                             info.NumberOfCores = Convert.ToInt32(obj["NumberOfCores"]);
                             info.NumberOfLogicalProcessors = Convert.ToInt32(obj["NumberOfLogicalProcessors"]);
@@ -149,7 +151,7 @@ namespace RbnSystemPro.Services
                     {
                         foreach (var obj in searcher.Get())
                         {
-                            string gpuName = obj["Name"]?.ToString() ?? "Unknown GPU";
+                            string gpuName = obj["Name"]?.ToString() ?? string.Empty;
                             
                             // Skip basic render drivers
                             if (gpuName.Contains("Microsoft Basic", StringComparison.OrdinalIgnoreCase)) continue;
@@ -159,13 +161,13 @@ namespace RbnSystemPro.Services
                             // APUs usually have "Radeon(TM) Graphics" or "Intel(R) UHD". Dedicated have "RTX", "GTX", "RX".
                             bool isCurrentIntegrated = info.GpuName.Contains("Graphics", StringComparison.OrdinalIgnoreCase) || 
                                                        info.GpuName.Contains("Intel", StringComparison.OrdinalIgnoreCase) ||
-                                                       info.GpuName == "Detecting...";
+                                                       !info.HasGpuName;
 
                             bool isNewProbablyDedicated = !gpuName.Contains("Graphics", StringComparison.OrdinalIgnoreCase) && 
                                                           !gpuName.Contains("Intel", StringComparison.OrdinalIgnoreCase);
 
                             // If we haven't found anything yet (Unknown GPU or Detecting...), OR if we have an integrated one but found a dedicated one:
-                            bool isEmptyOrPlaceholder = string.IsNullOrEmpty(info.GpuName) || info.GpuName == "Detecting..." || info.GpuName == "Unknown GPU";
+                            bool isEmptyOrPlaceholder = !info.HasGpuName;
                             
                             if (isEmptyOrPlaceholder || (isCurrentIntegrated && isNewProbablyDedicated))
                             {
@@ -222,11 +224,13 @@ namespace RbnSystemPro.Services
                                     double sharedGb = Math.Round((totalRamBytes / 2.0) / (1024.0 * 1024.0 * 1024.0), 1);
                                     double totalGb = Math.Round(dedicatedGb + sharedGb, 1);
 
-                                    info.GpuMemory = $"{dedicatedGb} GB Dedicated / {sharedGb} GB Shared (Total: {totalGb} GB)";
+                                    info.GpuDedicatedGb = dedicatedGb;
+                                    info.GpuSharedGb = sharedGb;
+                                    info.GpuTotalGb = totalGb;
                                 }
                                 else
                                 {
-                                    info.GpuMemory = "Detection Pending...";
+                                    info.GpuDedicatedGb = -1;
                                 }
                             }
                             catch (Exception ex)
@@ -277,7 +281,7 @@ namespace RbnSystemPro.Services
                     {
                         foreach (var obj in searcher.Get())
                         {
-                            info.WindowsEdition = obj["Caption"]?.ToString() ?? "Unknown Windows";
+                            info.WindowsEdition = obj["Caption"]?.ToString() ?? string.Empty;
                         }
                     }
 

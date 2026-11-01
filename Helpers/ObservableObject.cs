@@ -1,11 +1,22 @@
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using RbnSystemPro.Services;
 
 namespace RbnSystemPro.Helpers
 {
     public class ObservableObject : INotifyPropertyChanged
     {
+        public ObservableObject()
+        {
+            // DAPP-41: dil değişince tüm bağlar tazelenir (boş özellik adı = "hepsi").
+            // Anahtarla tutulan metinler ve LocKeyConverter bu sayede yeniden çevrilir.
+            Loc.LanguageChanged += OnLanguageChanged;
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnLanguageChanged(object? sender, EventArgs e) => OnPropertyChanged(string.Empty);
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {

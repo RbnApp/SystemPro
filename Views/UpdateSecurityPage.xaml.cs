@@ -20,11 +20,11 @@ namespace RbnSystemPro.Views
         }
 
         // Helper properties for display
-        public string DefenderStatusText => _health.IsDefenderActive ? "Active & Protecting" : "Action Recommended";
-        public string FirewallStatusText => _health.IsFirewallActive ? "Active & Monitoring" : "Protection Off";
-        public string SecureBootStatusText => _health.IsSecureBootEnabled ? "Enabled (Secure)" : "Disabled / Legacy";
-        public string UacStatusText => _health.IsUacEnabled ? "Enabled (Safe)" : "Disabled (Not Recommended)";
-        public string TpmStatusText => _health.IsTpmEnabled ? "TPM 2.0 Ready" : "Not Detected / Disabled";
+        public string DefenderStatusText => Loc.T(_health.IsDefenderActive ? "security.defender.active" : "security.defender.inactive");
+        public string FirewallStatusText => Loc.T(_health.IsFirewallActive ? "security.firewall.active" : "security.firewall.inactive");
+        public string SecureBootStatusText => Loc.T(_health.IsSecureBootEnabled ? "security.secureBoot.on" : "security.secureBoot.off");
+        public string UacStatusText => Loc.T(_health.IsUacEnabled ? "security.uac.on" : "security.uac.off");
+        public string TpmStatusText => Loc.T(_health.IsTpmEnabled ? "security.tpm.on" : "security.tpm.off");
         public string LastUpdateCheck => _health.LastUpdateCheck;
         public bool IsDefenderActive => _health.IsDefenderActive;
         public bool IsFirewallActive => _health.IsFirewallActive;
@@ -40,6 +40,9 @@ namespace RbnSystemPro.Views
             _systemService = systemService;
             this.DataContext = this;
             
+            // DAPP-41: dil değişince tüm görüntü metinleri yeniden okunur.
+            Loc.LanguageChanged += (s, e) => OnPropertyChanged(string.Empty);
+
             this.Loaded += async (s, e) => await LoadDataAsync();
         }
 

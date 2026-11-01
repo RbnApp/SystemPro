@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using RbnSystemPro.Services;
 
 namespace RbnSystemPro.Helpers
 {
@@ -23,7 +24,7 @@ namespace RbnSystemPro.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (value is bool isActivated && isActivated) ? "Windows Activated" : "Activation Required";
+            return Loc.T((value is bool isActivated && isActivated) ? "hw.license.active" : "hw.license.inactive");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

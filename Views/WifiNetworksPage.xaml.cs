@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using RbnSystemPro.Services;
 using RbnSystemPro.ViewModels;
 
 namespace RbnSystemPro.Views
@@ -19,7 +20,7 @@ namespace RbnSystemPro.Views
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show($"Error initializing WifiNetworksPage: {ex.Message}\n\n{ex.InnerException?.Message}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Loc.T("internal.initError", ex.Message, ex.InnerException?.Message), Loc.T("alert.criticalErrorTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -33,7 +34,7 @@ namespace RbnSystemPro.Views
             }
             catch (System.Exception ex)
             {
-                 MessageBox.Show($"Error connecting: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                 MessageBox.Show(Loc.T("internal.connectError", ex.Message), Loc.T("alert.errorTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private void OnBackClick(object sender, RoutedEventArgs e)

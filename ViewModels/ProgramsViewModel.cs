@@ -15,7 +15,9 @@ namespace RbnSystemPro.ViewModels
         private readonly ILoggerService _logger;
 
         private bool _isBusy;
-        private string _statusMessage = "Select programs to install";
+        // DAPP-41: durum metni anahtar + argüman olarak tutulur; dil değişince kendiliğinden çevrilir.
+        private string _statusKey = "programs.status.select";
+        private object?[] _statusArgs = System.Array.Empty<object?>();
         private int _progressValue;
         private bool _isWingetInstalled;
 
@@ -29,7 +31,7 @@ namespace RbnSystemPro.ViewModels
         public ObservableCollection<string> Categories { get; set; } = new();
         
         private List<ProgramModel> _allPrograms = new();
-        private string _selectedCategory = "All";
+        private string _selectedCategory = "cat.all";
 
         public string SelectedCategory
         {
@@ -49,10 +51,13 @@ namespace RbnSystemPro.ViewModels
             set => SetProperty(ref _isBusy, value);
         }
 
-        public string StatusMessage
+        public string StatusMessage => Loc.T(_statusKey, _statusArgs);
+
+        private void SetStatus(string key, params object?[] args)
         {
-            get => _statusMessage;
-            set => SetProperty(ref _statusMessage, value);
+            _statusKey = key;
+            _statusArgs = args;
+            OnPropertyChanged(nameof(StatusMessage));
         }
         
         public int ProgressValue
@@ -109,8 +114,8 @@ namespace RbnSystemPro.ViewModels
 
             // Populate Categories
             Categories.Clear();
-            Categories.Add("All");
-            var distinctCats = _allPrograms.Select(p => p.Category).Distinct().OrderBy(c => c);
+            Categories.Add("cat.all");
+            var distinctCats = _allPrograms.Select(p => p.CategoryKey).Distinct().OrderBy(c => c);
             foreach (var cat in distinctCats) Categories.Add(cat);
 
             // Check Winget Status
@@ -121,9 +126,9 @@ namespace RbnSystemPro.ViewModels
 
         private void FilterPrograms()
         {
-            var filtered = _selectedCategory == "All" 
-                ? _allPrograms 
-                : _allPrograms.Where(p => p.Category == _selectedCategory).ToList();
+            var filtered = _selectedCategory == "cat.all"
+                ? _allPrograms
+                : _allPrograms.Where(p => p.CategoryKey == _selectedCategory).ToList();
 
             // Sort: Not Installed First, then Alphabetical
             var sortedList = filtered.OrderBy(p => p.IsInstalled).ThenBy(p => p.Name).ToList();
@@ -147,7 +152,7 @@ namespace RbnSystemPro.ViewModels
             if (IsBusy) return;
             
             IsBusy = true;
-            StatusMessage = "Enabling Winget...";
+            SetStatus("programs.status.enablingWinget");
             
             bool success = await _softwareService.EnableWingetAsync();
             
@@ -156,13 +161,13 @@ namespace RbnSystemPro.ViewModels
             
             if (success)
             {
-                StatusMessage = "Winget enabled successfully.";
-                await _alertService.ShowSuccessAsync("Winget Ready", "Winget has been enabled and is ready to use.");
+                SetStatus("programs.status.wingetEnabled");
+                await _alertService.ShowSuccessAsync(Loc.T("programs.wingetReadyTitle"), Loc.T("programs.wingetReadyMsg"));
             }
             else
             {
-                StatusMessage = "Failed to enable Winget.";
-                await _alertService.ShowErrorAsync("Enable Failed", "Could not enable Winget automatically. Please install 'App Installer' from Microsoft Store.");
+                SetStatus("programs.status.wingetEnableFailed");
+                await _alertService.ShowErrorAsync(Loc.T("programs.enableFailedTitle"), Loc.T("programs.enableFailedMsg"));
             }
         }
 
@@ -172,7 +177,7 @@ namespace RbnSystemPro.ViewModels
             if (selected.Count == 0) return;
 
             IsBusy = true;
-            StatusMessage = "Starting installation...";
+            SetStatus("programs.status.startingInstall");
             ProgressValue = 0;
             
             int total = selected.Count;
@@ -180,8 +185,8 @@ namespace RbnSystemPro.ViewModels
 
             foreach (var program in selected)
             {
-                StatusMessage = $"Installing {program.Name}...";
-                program.Status = "Installing...";
+                SetStatus("programs.status.installing", program.Name);
+                program.StatusKey = "status.installing";
                 program.IsInstalling = true;
                 OnPropertyChanged(nameof(Programs)); // Refresh UI row if needed, though binding usually handles properies
 
@@ -189,7 +194,7 @@ namespace RbnSystemPro.ViewModels
 
                 program.IsInstalling = false;
                 program.IsInstalled = success;
-                program.Status = success ? "Installed" : "Failed";
+                program.StatusKey = success ? "status.installed" : "status.failed";
                 
                 if (!success)
                 {
@@ -200,11 +205,11 @@ namespace RbnSystemPro.ViewModels
                 ProgressValue = (int)((double)current / total * 100);
             }
 
-            StatusMessage = "Installation complete.";
+            SetStatus("programs.status.installComplete");
             IsBusy = false;
             ((DelegateCommand)InstallCommand).RaiseCanExecuteChanged();
 
-            await _alertService.ShowSuccessAsync("Installation Complete", $"Process finished. {selected.Count(p => p.IsInstalled)} programs installed successfully.");
+            await _alertService.ShowSuccessAsync(Loc.T("programs.installCompleteTitle"), Loc.T("programs.installCompleteMsg", selected.Count(p => p.IsInstalled)));
         }
 
         private async Task UninstallProgramAsync(ProgramModel program)
@@ -213,15 +218,14 @@ namespace RbnSystemPro.ViewModels
 
             // Confirm with user
             var confirmed = await _alertService.ShowConfirmAsync(
-                "Program Kaldır",
-                $"{program.Name} kaldırılacak (winget) ve programın kaldırma kaydı temizlenecek. " +
-                "Kullanıcı verileri silinmez. Devam edilsin mi?");
+                Loc.T("programs.uninstallConfirmTitle"),
+                Loc.T("programs.uninstallConfirmMsg", program.Name));
             
             if (!confirmed) return;
 
             IsBusy = true;
-            StatusMessage = $"Uninstalling {program.Name}...";
-            program.Status = "Uninstalling...";
+            SetStatus("programs.status.uninstalling", program.Name);
+            program.StatusKey = "status.uninstalling";
             program.IsInstalling = true;
 
             bool success = await _softwareService.UninstallProgramAsync(program);
@@ -231,19 +235,19 @@ namespace RbnSystemPro.ViewModels
             if (success)
             {
                 program.IsInstalled = false;
-                program.Status = "Ready";
-                StatusMessage = $"{program.Name} uninstalled successfully.";
+                program.StatusKey = "status.ready";
+                SetStatus("programs.status.uninstalled", program.Name);
                 
                 // Refresh the list to re-sort
                 FilterPrograms();
                 
-                await _alertService.ShowSuccessAsync("Uninstall Complete", $"{program.Name} has been completely removed from your system.");
+                await _alertService.ShowSuccessAsync(Loc.T("programs.uninstallCompleteTitle"), Loc.T("programs.uninstallCompleteMsg", program.Name));
             }
             else
             {
-                program.Status = "Uninstall Failed";
-                StatusMessage = $"Failed to uninstall {program.Name}.";
-                await _alertService.ShowErrorAsync("Uninstall Failed", $"Could not uninstall {program.Name}. Check logs for details.");
+                program.StatusKey = "status.uninstallFailed";
+                SetStatus("programs.status.uninstallFailed", program.Name);
+                await _alertService.ShowErrorAsync(Loc.T("programs.uninstallFailedTitle"), Loc.T("programs.uninstallFailedMsg", program.Name));
             }
 
             IsBusy = false;

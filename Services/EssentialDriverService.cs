@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
@@ -19,16 +19,17 @@ namespace RbnSystemPro.Services
     {
         private string _name = string.Empty;
         private string _id = string.Empty;
-        private string _description = string.Empty;
-        private string _status = "Ready";
+        private string _descriptionKey = string.Empty;
+        private string _statusKey = "status.ready";
         private bool _isInstalled;
         private string _icon = string.Empty;
         private string _hexColor = string.Empty;
 
         public string Name { get => _name; set => SetProperty(ref _name, value); }
         public string Id { get => _id; set => SetProperty(ref _id, value); }
-        public string Description { get => _description; set => SetProperty(ref _description, value); }
-        public string Status { get => _status; set => SetProperty(ref _status, value); }
+        // DAPP-41: açıklama ve durum anahtar olarak tutulur, ekran LocKeyConverter ile çizer.
+        public string DescriptionKey { get => _descriptionKey; set => SetProperty(ref _descriptionKey, value); }
+        public string StatusKey { get => _statusKey; set => SetProperty(ref _statusKey, value); }
         public bool IsInstalled { get => _isInstalled; set => SetProperty(ref _isInstalled, value); }
         public string Icon { get => _icon; set => SetProperty(ref _icon, value); }
         public string HexColor { get => _hexColor; set => SetProperty(ref _hexColor, value); }
@@ -54,7 +55,7 @@ namespace RbnSystemPro.Services
                 {
                     Name = "Realtek Audio",
                     Id = "", // no winget package exists for this device driver (verified: winget search --id, 0 results)
-                    Description = "High Definition Audio Drivers.",
+                    DescriptionKey = "drv.realtekAudio.desc",
                     Icon = "Speaker220",
                     HexColor = "#107C10",
                     DetectionKeywords = new[] { "Realtek High Definition Audio", "Realtek(R) Audio", "Realtek Audio" }
@@ -63,7 +64,7 @@ namespace RbnSystemPro.Services
                 {
                     Name = "Intel Chipset",
                     Id = "Intel.IntelDriverAndSupportAssistant", // verified with winget search --id --exact
-                    Description = "INF Update Utility & Support Assistant for Intel Chipsets.",
+                    DescriptionKey = "drv.intelChipset.desc",
                     Icon = "DeveloperBoard24",
                     HexColor = "#0078D7",
                     DetectionKeywords = new[] { "Intel(R) Chipset", "Intel(R) Management Engine", "Intel(R) Serial IO", "Intel(R) SMBus" }
@@ -72,7 +73,7 @@ namespace RbnSystemPro.Services
                 {
                     Name = "Intel Management Engine",
                     Id = "Intel.IntelDriverAndSupportAssistant", // verified with winget search --id --exact
-                    Description = "IME Component for system stability.",
+                    DescriptionKey = "drv.intelMe.desc",
                     Icon = "ShieldLock24",
                     HexColor = "#0078D7",
                     DetectionKeywords = new[] { "Intel(R) Management Engine Interface", "Intel(R) MEI", "Management Engine" }
@@ -81,7 +82,7 @@ namespace RbnSystemPro.Services
                 {
                     Name = "Realtek Ethernet",
                     Id = "", // no winget package exists for this device driver (verified: winget search --id, 0 results)
-                    Description = "PCIe GbE / 2.5GbE LAN Controller Drivers.",
+                    DescriptionKey = "drv.realtekEthernet.desc",
                     Icon = "Globe24",
                     HexColor = "#107C10",
                     DetectionKeywords = new[] { "Realtek PCIe", "Realtek Gaming", "Realtek USB GbE", "Realtek RTL" }
@@ -90,7 +91,7 @@ namespace RbnSystemPro.Services
                 {
                     Name = "Intel Wireless",
                     Id = "Intel.IntelDriverAndSupportAssistant", // verified with winget search --id --exact
-                    Description = "Wi-Fi Drivers for Intel Wireless Adapters.",
+                    DescriptionKey = "drv.intelWireless.desc",
                     Icon = "Wifi124",
                     HexColor = "#0078D7",
                     DetectionKeywords = new[] { "Intel(R) Wi-Fi", "Intel(R) Wireless", "Intel(R) Dual Band Wireless" }
@@ -125,12 +126,12 @@ namespace RbnSystemPro.Services
                         if (installed)
                         {
                             driver.IsInstalled = true;
-                            driver.Status = "Installed";
+                            driver.StatusKey = "status.installed";
                         }
                         else
                         {
                             driver.IsInstalled = false;
-                            driver.Status = "Ready";
+                            driver.StatusKey = "status.ready";
                         }
                     }
                 }
@@ -185,7 +186,7 @@ namespace RbnSystemPro.Services
 
                         if (process.ExitCode == 0)
                         {
-                            _timeline.AddEvent($"{driver.Name} Installed", $"Driver {driver.Name} installed successfully.", TimelineEventType.Success);
+                            _timeline.AddEventKey("event.driverInstalled.title", "event.driverInstalled.desc", TimelineEventType.Success, new[] { driver.Name }, new[] { driver.Name });
                             return true;
                         }
                     }
@@ -196,7 +197,7 @@ namespace RbnSystemPro.Services
                 await CheckInstalledDriversAsync(checkList);
                 if (driver.IsInstalled)
                 {
-                    _timeline.AddEvent($"{driver.Name} Verified", $"Driver {driver.Name} is active on the system.", TimelineEventType.Success);
+                    _timeline.AddEventKey("event.driverVerified.title", "event.driverVerified.desc", TimelineEventType.Success, new[] { driver.Name }, new[] { driver.Name });
                     return true;
                 }
 

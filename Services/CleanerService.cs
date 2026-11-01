@@ -24,12 +24,13 @@ namespace RbnSystemPro.Services
         private string _name = string.Empty;
         private string _path = string.Empty;
         private bool _isSelected;
-        private string _status = "Ready";
+        private string _statusKey = "status.ready";
 
         public string Name { get => _name; set => SetProperty(ref _name, value); }
         public string Path { get => _path; set => SetProperty(ref _path, value); }
         public bool IsSelected { get => _isSelected; set => SetProperty(ref _isSelected, value); }
-        public string Status { get => _status; set => SetProperty(ref _status, value); }
+        // DAPP-41: çevrilebilir durum metni anahtar olarak tutulur.
+        public string StatusKey { get => _statusKey; set => SetProperty(ref _statusKey, value); }
         public string Icon { get; set; } = string.Empty;
     }
 
@@ -110,13 +111,13 @@ namespace RbnSystemPro.Services
                     }
                 }
 
-                _timeline.AddEvent($"{browser.Name} Cleaned", "Cache and temporary files removed.", TimelineEventType.Success);
+                _timeline.AddEventKey("event.browserCleaned.title", "event.browserCleaned.desc", TimelineEventType.Success, new[] { browser.Name });
                 return true;
             }
             catch (Exception ex)
             {
                 await _logger.LogErrorAsync($"Failed to clean {browser.Name}", ex);
-                _timeline.AddEvent($"Failed to clean {browser.Name}", ex.Message, TimelineEventType.Error);
+                _timeline.AddEvent(Loc.T("event.browserCleanFailed.title", browser.Name), ex.Message, TimelineEventType.Error);
                 return false;
             }
         }
@@ -177,7 +178,7 @@ namespace RbnSystemPro.Services
                 {
                     _ = _logger.LogWarningAsync($"Registry temizlenemedi (MuiCache): {ex.Message}");
                 }
-                if (itemsCleaned > 0) _timeline.AddEvent("Registry Clean", $"Cleaned {itemsCleaned} registry items.", TimelineEventType.Success);
+                if (itemsCleaned > 0) _timeline.AddEventKey("event.registryClean.title", "event.registryClean.desc", TimelineEventType.Success, null, new[] { itemsCleaned.ToString() });
                 return itemsCleaned;
             });
         }
@@ -225,7 +226,7 @@ namespace RbnSystemPro.Services
                 {
                     if (Directory.Exists(path)) CleanDirectory(path);
                 }
-                _timeline.AddEvent("System Clean", "Temporary files cleaned.", TimelineEventType.Success);
+                _timeline.AddEventKey("event.systemClean.title", "event.systemClean.desc", TimelineEventType.Success);
                 return true;
             });
         }

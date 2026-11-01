@@ -29,7 +29,9 @@ kurar, geçici dosyaları temizler, ağ ayarlarına erişir ve makinenin anlık 
 Uygulama **yönetici haklarıyla** çalışır (`app.manifest:19` → `requireAdministrator`); bu
 yüzden açılışta UAC onayı istenir ve sistem değiştiren işlemler sorunsuz çalışır.
 
-> Arayüz **İngilizce**. Aşağıdaki başlıklarda ekranda gördüğünüz sayfa adları kullanılır.
+> Dil: **Türkçe ve English** (varsayılan: Windows görüntü dili; **Ayarlar → Dil / Language** ile yeniden
+> başlatmadan değişir). Aşağıdaki başlıklarda ekranda gördüğünüz sayfa adları kullanılır; **log dosyaları
+> İngilizce** kalır, ürün/marka ve teknik adlar (winget, DNS, TCP, GPU, NVIDIA, Win11Debloat) çevrilmez.
 
 ## ✨ Özellikler
 
@@ -90,6 +92,8 @@ yüzden açılışta UAC onayı istenir ve sistem değiştiren işlemler sorunsu
 - Kayıt Ayarlar'daki **Clear Logs** düğmesiyle temizlenir.
 
 ### ⚙️ Settings
+- **Dil / Language**: Sistem dili (varsayılan), Türkçe, English — seçim `Logs/app_settings.json` içine yazılır
+  ve uygulama yeniden başlatılmadan uygulanır.
 - Sürüm bilgisi ve **Check for Updates**: GitHub'daki `version.json` ile karşılaştırır; yeni sürüm
   varsa indirme sayfasını tarayıcıda açar.
 - GitHub deposu bağlantısı.
@@ -189,6 +193,14 @@ dotnet publish -c Release -r win-x64 --self-contained false
 ```
 
 `Publish/` klasöründeki eski `.exe` güncel değildir; yeni paket yukarıdaki `publish` komutuyla üretilir.
+
+### Yerelleştirme (TR/EN)
+
+- Metinler tek kaynakta: `Resources/Strings.tr.xaml` ve `Resources/Strings.en.xaml` (her anahtar iki dilde).
+- XAML'de `{l:T anahtar}`, C# içinde `Loc.T("anahtar", args)`; şablonlarda `{l:B anahtar}` (Binding tabanlı).
+- Dil, `LocalizationService` üzerinden değişir; sözlük değişimi `DynamicResource` bağlarını tazeler.
+- Denetim: `node tools/i18n-check.js` (anahtar eşitliği + tanımsız/kullanılmayan anahtar) ve
+  `RbnSystemPro.exe --i18n-check <rapor>` (çalışma zamanı eşitliği).
 
 ### Kurulum paketi üretimi
 

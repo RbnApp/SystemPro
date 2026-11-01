@@ -25,10 +25,8 @@ namespace RbnSystemPro.Views
             // Kaynak adresi ve yönetici uyarısı ONAYDAN ÖNCE gösterilir (denetim #1).
             // Betiğin kendisi bu kartta değiştirilmedi; yerel kopya/SHA kararı patrona ait.
             var confirmed = await alertService.ShowConfirmAsync(
-                "Windows Deploy",
-                "İnternetten bir betik indirilip YÖNETİCİ yetkisiyle çalıştırılacak.\n\n" +
-                "Kaynak: https://debloat.raphi.re/ (Raphire/Win11Debloat)\n\n" +
-                "Betik Windows ayarlarını değiştirir; etkisi geri alınamaz. Devam edilsin mi?");
+                Loc.T("deploy.title"),
+                Loc.T("deploy.confirmMsg"));
 
             if (confirmed)
             {
@@ -36,11 +34,11 @@ namespace RbnSystemPro.Views
                 {
                     mainVm.IsBusy = true;
                     await deployService.RunRaphireWinDeployAsync();
-                    await alertService.ShowSuccessAsync("Windows Deploy", "Windows Deploy script executed successfully.");
+                    await alertService.ShowSuccessAsync(Loc.T("deploy.title"), Loc.T("deploy.successMsg"));
                 }
                 catch (System.Exception ex)
                 {
-                    await alertService.ShowErrorAsync("Windows Deploy Error", ex.Message);
+                    await alertService.ShowErrorAsync(Loc.T("deploy.errorTitle"), ex.Message);
                 }
                 finally
                 {

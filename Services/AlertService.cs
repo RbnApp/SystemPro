@@ -28,25 +28,25 @@ namespace RbnSystemPro.Services
         public async Task ShowAsync(string title, string message, ControlAppearance appearance = ControlAppearance.Primary)
         {
             await _loggerService.LogInfoAsync($"Alert Shown: {title} - {message}");
-            await _contentDialogService.ShowAlertAsync(title, message, "OK");
+            await _contentDialogService.ShowAlertAsync(title, message, Loc.T("common.ok"));
         }
 
         public async Task ShowErrorAsync(string title, string message, System.Exception? ex = null)
         {
             await _loggerService.LogErrorAsync($"Error Alert: {title} - {message}", ex);
-            await _contentDialogService.ShowAlertAsync(title, message, "OK");
+            await _contentDialogService.ShowAlertAsync(title, message, Loc.T("common.ok"));
         }
 
         public async Task ShowWarningAsync(string title, string message)
         {
             await _loggerService.LogWarningAsync($"Warning Alert: {title} - {message}");
-            await _contentDialogService.ShowAlertAsync(title, message, "OK");
+            await _contentDialogService.ShowAlertAsync(title, message, Loc.T("common.ok"));
         }
 
         public async Task ShowSuccessAsync(string title, string message)
         {
             await _loggerService.LogInfoAsync($"Success Alert: {title} - {message}");
-            await _contentDialogService.ShowAlertAsync(title, message, "OK");
+            await _contentDialogService.ShowAlertAsync(title, message, Loc.T("common.ok"));
         }
 
         public async Task<bool> ShowConfirmAsync(string title, string message)
@@ -62,8 +62,8 @@ namespace RbnSystemPro.Services
                     {
                         Title = title,
                         Content = message,
-                        PrimaryButtonText = "Yes",
-                        CloseButtonText = "No"
+                        PrimaryButtonText = Loc.T("common.yes"),
+                        CloseButtonText = Loc.T("common.no")
                     });
 
                 return dialogResult == ContentDialogResult.Primary;
@@ -78,8 +78,8 @@ namespace RbnSystemPro.Services
                         {
                             Title = title,
                             Content = message,
-                            PrimaryButtonText = "Yes",
-                            CloseButtonText = "No"
+                            PrimaryButtonText = Loc.T("common.yes"),
+                            CloseButtonText = Loc.T("common.no")
                         });
 
                     return dialogResult == ContentDialogResult.Primary;
