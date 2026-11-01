@@ -11,6 +11,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/RbnApp/SystemPro/releases/latest"><img alt="Son sürüm" src="https://img.shields.io/github/v/release/RbnApp/SystemPro?style=for-the-badge&amp;label=SON%20S%C3%9CR%C3%9CM"></a>
   <a href="#-gereksinimler"><img alt="Windows 10 ve 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=for-the-badge&amp;logo=windows"></a>
   <a href="LICENSE"><img alt="MIT lisansı" src="https://img.shields.io/badge/License-MIT-3DA639?style=for-the-badge"></a>
   <a href="https://github.com/RbnApp/SystemPro/issues/new"><img alt="Geri bildirim" src="https://img.shields.io/badge/GER%C4%B0%20B%C4%B0LD%C4%B0R%C4%B0M-issues-2ea44f?style=for-the-badge&amp;logo=github"></a>
@@ -116,16 +117,36 @@ geri yükleme noktası almanızı öneririz.
 
 ## 🚀 Kurulum
 
-> Kurulum sihirbazı (setup `.exe`) **henüz yok**; ilk kurulum paketi planlanıyor.
+Son yayın: **[RbnApp/SystemPro · Releases](https://github.com/RbnApp/SystemPro/releases/latest)**.
+İndirilecek dosya `RbnSystemPro-Setup-<sürüm>.exe`; aşağıdaki örnekler güncel sürüm olan `0.1.3` ile yazıldı.
 
-Bugün uygulama iki yolla çalıştırılır:
+1. Dosyayı indirip çalıştırın. Windows yönetici onayı (UAC) ister; uygulama `Program Files\RbnSystemPro`
+   altına kurulur, Başlat menüsüne kısayol eklenir. Kaldırmak için **Ayarlar → Uygulamalar**.
+   Kaldırmada uygulamanın `Logs` klasöründeki günlük ve ayarlarınız silinmez.
+2. Makinede **.NET 10 Desktop Runtime** kurulu olmalıdır; yoksa kurulumdan sonra `.exe` açılmaz
+   (bkz. [Gereksinimler](#-gereksinimler)).
 
-1. **Kaynaktan:** .NET 10 SDK kurulu makinede `dotnet run -c Debug` (UAC onayı ister).
-2. **Yayın paketi:** `dotnet publish -c Release -r win-x64 --self-contained false` komutunun
-   ürettiği tek dosyalık `RbnSystemPro.exe`. Bu dosya için makinede **.NET 10 Desktop Runtime** kurulu olmalıdır.
+Kurulum dosyası **Windows kod imzasıyla imzalı değildir**. SmartScreen "Yine de çalıştır" diyebilir; bu
+beklenen durumdur. Dosyayı yalnız bu depodan (`RbnApp/SystemPro`) alın.
 
-Uygulama **imzasızdır**. Windows SmartScreen "Yine de çalıştır" diyebilir; bu beklenen durumdur.
-Dosyayı yalnız bu depodan (`RbnApp/SystemPro`) alın.
+### 🔎 Dosyayı doğrula
+
+İndirdiğiniz dosyanın değişmediğini SHA-256 özetiyle kontrol edebilirsiniz. Aynı sürümün yayın sayfasında
+duran `RbnSystemPro-Setup-<sürüm>.exe.sha256` dosyası beklenen özeti taşır. İki dosyayı aynı klasöre indirip
+PowerShell'de:
+
+```powershell
+Get-Content .\RbnSystemPro-Setup-0.1.3.exe.sha256             # beklenen: <özet>  <dosya adı>
+Get-FileHash .\RbnSystemPro-Setup-0.1.3.exe -Algorithm SHA256  # sizin dosyanızın özeti
+```
+
+İki özet büyük/küçük harf farkı gözetmeden aynıysa dosya değişmemiştir. Farklıysa çalıştırmayın, yeniden
+indirin. Yayın sayfasındaki `.sig` dosyası ayrıca **bütünlük imzasıdır** (Ed25519, rbnbilisim imza anahtarı);
+dosyanın bize ait olduğunu ve değişmediğini gösterir, geliştirici tarafında kontrol edilir. Windows'un
+"doğrulanmış yayıncı" imzası değildir; SmartScreen uyarısını kaldırmaz.
+
+Kurulum paketini kullanmadan denemek isteyenler için: .NET 10 SDK kurulu makinede `dotnet run -c Debug`
+(UAC onayı ister). Kendi paketinizi üretmek için aşağıdaki **Geliştirme** bölümüne bakın.
 
 ## 📋 Gereksinimler
 
@@ -151,10 +172,9 @@ değeri de buradan okunur (`RbnSystemPro.csproj:17-27`). Kural: YAMA artar, 9'da
 ARA 9'dan sonra ANA'ya devreder (0.4.9 → 0.5.0, 0.9.9 → 1.0.0). Sürüm numarası yalnız yeni bir
 yapı yayımlanırken artırılır.
 
-Rozet bandında **sürüm rozeti bilerek yok**: depoda henüz GitHub Release açılmadı, "son sürüm" rozeti
-boş bir yayını gösterirdi. İlk Release (`v0.1.3` etiketi) açıldığında banda
-`https://img.shields.io/github/v/release/RbnApp/SystemPro?style=for-the-badge&label=SON%20S%C3%9CR%C3%9CM`
-eklenir; o zamana kadar sürümü yukarıdaki `AppVersion` gösterir.
+Rozet bandındaki **SON SÜRÜM** rozeti dinamiktir: GitHub'daki en son Release etiketini gösterir, tıklanınca
+`releases/latest` sayfası açılır. Etiket ile buradaki `AppVersion` aynı sürümü taşır; sürüm yalnız yeni bir
+yapı yayımlanırken artırıldığı için ikisi ayrı düşmez.
 
 ## 📄 Lisans
 
@@ -182,7 +202,8 @@ powershell -ExecutionPolicy Bypass -File Setup\derle.ps1
 Betik sırayla `dotnet publish` (Release, win-x64, self-contained=false) → `ISCC` çalıştırır ve çıktının yolunu,
 boyutunu, SHA-256'sını yazar. Çıktı `bin\setup\RbnSystemPro-Setup-<sürüm>.exe`; `bin/` dizini `.gitignore`'da
 olduğu için commit edilmez. Sihirbaz `Program Files\RbnSystemPro`'ya kurar (yönetici ister), kaldırmada kullanıcı
-günlüğü/ayarı (`{app}\Logs`) silinmez. Paket imzasızdır; imzalama ayrı iştir.
+günlüğü/ayarı (`{app}\Logs`) silinmez. Paket Windows kod imzasıyla (Authenticode) imzalı değildir; yayımlanan
+`.sig` dosyası yalnız bütünlük imzasıdır.
 
 | Yol | İçerik |
 |---|---|
